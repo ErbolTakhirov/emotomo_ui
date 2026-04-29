@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EmoTomo — Onboarding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0c0c1f;
+      --panel: #12122a;
+      --pink: #ff007a;
+      --text: #ffffff;
+      --muted: #a0a0b0;
+    }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: 'Inter', sans-serif;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh;
+    }
+    .onb-card {
+      background: rgba(18, 18, 42, 0.95);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px; padding: 40px;
+      width: 100%; max-width: 440px;
+      text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .step { display: none; animation: fadeIn 0.3s; }
+    .step.active { display: block; }
+    @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
+    
+    .onb-title { font-size: 28px; font-weight: 800; margin: 0 0 10px; }
+    .onb-sub { color: var(--muted); font-size: 15px; margin: 0 0 30px; }
+    
+    .input-field {
+      width: 100%; padding: 14px 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; color: #fff;
+      font-size: 16px; font-family: inherit;
+      box-sizing: border-box; margin-bottom: 20px;
+      text-align: center;
+    }
+    .input-field:focus { border-color: var(--pink); outline: none; }
+    
+    .style-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;
+    }
+    .style-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; padding: 16px;
+      color: #fff; cursor: pointer; transition: 0.2s;
+    }
+    .style-btn.selected {
+      background: rgba(255,0,122,0.15);
+      border-color: var(--pink);
+    }
+    .style-icon { font-size: 24px; margin-bottom: 8px; }
+    .style-name { font-weight: 600; font-size: 14px; }
+    
+    .av-grid {
+      display: flex; gap: 14px; justify-content: center; margin-bottom: 30px;
+    }
+    .av-opt {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      display: grid; place-items: center; font-size: 24px;
+      cursor: pointer; border: 2px solid transparent; transition: 0.2s;
+    }
+    .av-opt.selected { border-color: var(--pink); transform: scale(1.1); }
+    
+    .btn-next {
+      background: var(--pink); color: #fff;
+      border: none; border-radius: 12px;
+      width: 100%; padding: 16px; font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: 0.2s;
+    }
+    .btn-next:hover { background: #d40065; }
+    
+    .dots {
+      display: flex; justify-content: center; gap: 8px; margin-top: 24px;
+    }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+    }
+    .dot.active { background: var(--pink); }
+  </style>
+</head>
+<body>
+  <div class="onb-card">
+    
+    <!-- Step 1: Name -->
+    <div id="step1" class="step active">
+      <h2 class="onb-title">What should we call you?</h2>
+      <p class="onb-sub">This is how characters will address you.</p>
+      <input type="text" id="inp-name" class="input-field" placeholder="Your nickname">
+      <button class="btn-next" onclick="nextStep(2)">Continue</button>
+    </div>
+
+    <!-- Step 2: Chat Style -->
+    <div id="step2" class="step">
+      <h2 class="onb-title">Choose chat style</h2>
+      <p class="onb-sub">How do you prefer the AI to respond?</p>
+      <div class="style-grid">
+        <div class="style-btn" onclick="selectStyle('casual', this)">
+          <div class="style-icon">👋</div>
+          <div class="style-name">Casual</div>
+        </div>
+        <div class="style-btn" onclick="selectStyle('rp', this)">
+          <div class="style-icon">🎭</div>
+          <div class="style-name">Roleplay</div>
+        </div>
+        <div class="style-btn" onclick="selectStyle('short', this)">
+          <div class="style-icon">⚡</div>
+          <div class="style-name">Short & Fast</div>
+        </div>
+        <div class="style-btn" onclick="selectStyle('story', this)">
+          <div class="style-icon">📖</div>
+          <div class="style-name">Storyteller</div>
+        </div>
+      </div>
+      <button class="btn-next" onclick="nextStep(3)">Continue</button>
+    </div>
+
+    <!-- Step 3: Avatar -->
+    <div id="step3" class="step">
+      <h2 class="onb-title">Pick an avatar</h2>
+      <p class="onb-sub">Choose your profile icon.</p>
+      <div class="av-grid">
+        <div class="av-opt" onclick="selectAv('🦊', this)">🦊</div>
+        <div class="av-opt" onclick="selectAv('🐼', this)">🐼</div>
+        <div class="av-opt" onclick="selectAv('🐉', this)">🐉</div>
+        <div class="av-opt" onclick="selectAv('👻', this)">👻</div>
+      </div>
+      <button class="btn-next" id="btn-finish" onclick="finishOnboarding()">Start Chatting</button>
+    </div>
+
+    <!-- Progress -->
+    <div class="dots">
+      <div class="dot active" id="dot1"></div>
+      <div class="dot" id="dot2"></div>
+      <div class="dot" id="dot3"></div>
+    </div>
+  </div>
+
+  <script src="/static/utils.js"></script>
+  <script>
+    let prefs = { nickname: '', style: '', avatar: '' };
+
+    function nextStep(n) {
+      if (n === 2) {
+        prefs.nickname = document.getElementById('inp-name').value.trim() || 'Guest';
+      }
+      if (n === 3 && !prefs.style) prefs.style = 'casual'; // default
+      
+      document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+      document.getElementById('step'+n).classList.add('active');
+      
+      document.querySelectorAll('.dot').forEach(el => el.classList.remove('active'));
+      document.getElementById('dot'+n).classList.add('active');
+    }
+
+    function selectStyle(val, el) {
+      prefs.style = val;
+      document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function selectAv(val, el) {
+      prefs.avatar = val;
+      document.querySelectorAll('.av-opt').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    async function finishOnboarding() {
+      if (!prefs.avatar) prefs.avatar = '👤';
+      
+      // Save locally
+      localStorage.setItem('username', prefs.nickname);
+      localStorage.setItem('chat_style', prefs.style);
+      localStorage.setItem('avatar', prefs.avatar);
+      
+      document.getElementById('btn-finish').textContent = 'Saving...';
+      
+      // Save to backend
+      const token = localStorage.getItem('auth_token');
+      if (token) {
+        try {
+          await fetch('/api/auth/preferences/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify(prefs)
+          });
+        } catch (e) { console.error('Failed to save prefs backend', e); }
+      }
+      
+      window.location.href = '/catalog.html';
+    }
+  </script>
+</body>
+</html>

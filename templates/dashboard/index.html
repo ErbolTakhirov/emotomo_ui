@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Личный кабинет - EmoTomo</title>
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <style>
+    body {
+      background: linear-gradient(140deg, #0c0f14, #111827);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .header {
+      background: rgba(18, 20, 28, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 30px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(12px);
+    }
+
+    .header h1 {
+      color: #fff;
+      margin: 0 0 10px 0;
+      font-size: 32px;
+    }
+
+    .header h1 span {
+      color: #8b5cf6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(18, 20, 28, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+    }
+
+    .card h2 {
+      color: #fff;
+      font-size: 18px;
+      margin: 0 0 16px 0;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .info-label {
+      color: #9aa0a6;
+      font-size: 14px;
+    }
+
+    .info-value {
+      color: #e5e7eb;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    .nav-link {
+      color: #8b5cf6;
+      text-decoration: none;
+      font-size: 14px;
+      margin-right: 20px;
+    }
+
+    .message {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .message.success {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #22c55e;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="aurora"></div>
+  <div class="container">
+    <div style="margin-bottom: 20px;">
+      <a href="{% url 'core:home' %}" class="nav-link">← На главную</a>
+      <a href="{% url 'core:logout' %}" class="nav-link">Выйти</a>
+    </div>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="message {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+    <div class="header">
+      <h1>Добро пожаловать, <span>{{ user.username }}</span>!</h1>
+      <p style="color: #9aa0a6; margin: 0;">Личный кабинет EmoTomo</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <h2>Профиль</h2>
+        <div class="info-row"><span class="info-label">Имя пользователя</span><span class="info-value">{{ user.username
+            }}</span></div>
+        <div class="info-row"><span class="info-label">Email</span><span class="info-value">{{ user.email }}</span>
+        </div>
+        <div class="info-row" style="border:none;"><span class="info-label">Регистрация</span><span
+            class="info-value">{{ user.date_joined|date:"d.m.Y" }}</span></div>
+      </div>
+      <div class="card">
+        <h2>Быстрые действия</h2>
+        <a href="{% url 'core:home' %}" class="btn">Чат с персонажами</a>
+        <a href="{% url 'core:chat_history' %}" class="btn"
+          style="background: linear-gradient(135deg, #ff5aa5, #ff4fa3);">История чатов</a>
+        <a href="{% url 'core:profile' %}" class="btn" style="background: rgba(255, 255, 255, 0.1);">Мой профиль</a>
+      </div>
+      <div class="card">
+        <h2>Информация</h2>
+        <div class="info-row"><span class="info-label">Статус</span><span class="info-value" style="color: #22c55e;">✓
+            Активен</span></div>
+        <div class="info-row" style="border:none;"><span class="info-label">Email подтвержден</span><span
+            class="info-value" style="color: #22c55e;">✓ Да</span></div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,602 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История чатов - EmoTomo</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            background: linear-gradient(140deg, #0c0f14, #111827);
+            min-height: 100vh;
+            margin: 0;
+            color: #e5e7eb;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .nav-link {
+            color: #8b5cf6;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #a78bfa;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: rgba(18, 20, 28, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .page-header h1 {
+            color: #fff;
+            margin: 0;
+            font-size: 32px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-header h1 span {
+            background: linear-gradient(135deg, #8b5cf6, #ff5aa5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 24px;
+        }
+
+        .stat-badge {
+            text-align: center;
+        }
+
+        .stat-badge-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .stat-badge-value.purple {
+            color: #8b5cf6;
+        }
+
+        .stat-badge-label {
+            font-size: 12px;
+            color: #9aa0a6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Search and Filters */
+        .controls-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 280px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            background: rgba(18, 20, 28, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: #6b7280;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+        }
+
+        .filter-dropdown {
+            position: relative;
+        }
+
+        .filter-btn {
+            padding: 14px 20px;
+            background: rgba(18, 20, 28, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+            color: #e5e7eb;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .filter-btn.active {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: #8b5cf6;
+            color: #8b5cf6;
+        }
+
+        /* Character Chips */
+        .character-chips {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .character-chip {
+            padding: 10px 18px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            color: #9aa0a6;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .character-chip:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .character-chip.active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(255, 90, 165, 0.2));
+            border-color: #8b5cf6;
+            color: #fff;
+        }
+
+        .character-chip-count {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        /* Sessions Grid */
+        .sessions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 20px;
+        }
+
+        .session-card {
+            background: rgba(18, 20, 28, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 20px;
+            backdrop-filter: blur(12px);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .session-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #8b5cf6, #ff5aa5);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .session-card:hover {
+            border-color: rgba(139, 92, 246, 0.5);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .session-card:hover::before {
+            opacity: 1;
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .session-title {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+            line-height: 1.3;
+            flex: 1;
+            padding-right: 12px;
+        }
+
+        .session-date {
+            color: #6b7280;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .session-preview {
+            color: #9aa0a6;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .session-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .session-character {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(139, 92, 246, 0.1);
+            padding: 6px 14px;
+            border-radius: 20px;
+            color: #8b5cf6;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .session-stats {
+            display: flex;
+            gap: 12px;
+        }
+
+        .session-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: rgba(18, 20, 28, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            backdrop-filter: blur(12px);
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(255, 90, 165, 0.2));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .empty-icon svg {
+            width: 40px;
+            height: 40px;
+            color: #8b5cf6;
+        }
+
+        .empty-state h3 {
+            color: #fff;
+            font-size: 20px;
+            margin: 0 0 12px 0;
+        }
+
+        .empty-state p {
+            color: #9aa0a6;
+            font-size: 15px;
+            margin: 0 0 24px 0;
+        }
+
+        .empty-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            border-radius: 14px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
+            transition: all 0.2s;
+        }
+
+        .empty-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(139, 92, 246, 0.5);
+        }
+
+        /* Export Button */
+        .export-btn {
+            padding: 14px 20px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 14px;
+            color: #22c55e;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .export-btn:hover {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: #22c55e;
+            transform: translateY(-1px);
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 60px 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(139, 92, 246, 0.2);
+            border-top-color: #8b5cf6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .sessions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-stats {
+                width: 100%;
+                justify-content: space-around;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aurora"></div>
+    <div class="container">
+        <!-- Navigation -->
+        <div class="nav-bar">
+            <a href="{% url 'core:dashboard' %}" class="nav-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                Личный кабинет
+            </a>
+            <a href="{% url 'core:home' %}" class="nav-link">На главную</a>
+        </div>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1>💬 История <span>чатов</span></h1>
+                <p style="color: #9aa0a6; margin: 8px 0 0 0;">Все ваши разговоры с AI-персонажами</p>
+            </div>
+            <div class="header-stats">
+                <div class="stat-badge">
+                    <div class="stat-badge-value purple">{{ sessions|length }}</div>
+                    <div class="stat-badge-label">Чатов</div>
+                </div>
+                <div class="stat-badge">
+                    <div class="stat-badge-value">{{ characters|length }}</div>
+                    <div class="stat-badge-label">Персонажей</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls-bar">
+            <div class="search-box">
+                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.35-4.35" />
+                </svg>
+                <input type="text" class="search-input" id="search-input" placeholder="Поиск по чатам..."
+                    onkeyup="filterSessions()">
+            </div>
+            <a href="/api/chat-export/" class="export-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                Экспорт всех чатов
+            </a>
+        </div>
+
+        <!-- Character Filter Chips -->
+        {% if characters %}
+        <div class="character-chips">
+            <a href="{% url 'core:chat_history' %}"
+                class="character-chip {% if not selected_character %}active{% endif %}">
+                Все персонажи
+            </a>
+            {% for character in characters %}
+            <a href="?character={{ character }}"
+                class="character-chip {% if selected_character == character %}active{% endif %}">
+                🎭 {{ character }}
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Sessions Grid -->
+        <div class="sessions-grid" id="sessions-grid">
+            {% if sessions %}
+            {% for session in sessions %}
+            <div class="session-card" onclick="window.location.href='{% url 'core:chat_session_detail' session.id %}'"
+                data-title="{{ session.get_title|lower }}" data-character="{{ session.character_slug|lower }}">
+                <div class="session-header">
+                    <h3 class="session-title">{{ session.get_title }}</h3>
+                    <span class="session-date">{{ session.updated_at|date:"d.m.Y" }}</span>
+                </div>
+                <p class="session-preview">
+                    {% with last_msg=session.messages.last %}
+                    {% if last_msg %}
+                    {{ last_msg.content|truncatechars:120 }}
+                    {% else %}
+                    Нет сообщений
+                    {% endif %}
+                    {% endwith %}
+                </p>
+                <div class="session-footer">
+                    <span class="session-character">
+                        🎭 {{ session.character_slug }}
+                    </span>
+                    <div class="session-stats">
+                        <span class="session-stat">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                            </svg>
+                            {{ session.messages.count }}
+                        </span>
+                        <span class="session-stat">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                            {{ session.updated_at|timesince }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state" style="grid-column: 1 / -1;">
+                <div class="empty-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
+                </div>
+                <h3>Пока нет чатов</h3>
+                <p>Начните общение с AI-персонажами на главной странице</p>
+                <a href="{% url 'core:home' %}" class="empty-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="16" />
+                        <line x1="8" y1="12" x2="16" y2="12" />
+                    </svg>
+                    Выбрать персонажа
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function filterSessions() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const cards = document.querySelectorAll('.session-card');
+
+            cards.forEach(card => {
+                const title = card.dataset.title || '';
+                const character = card.dataset.character || '';
+                const matches = title.includes(query) || character.includes(query);
+                card.style.display = matches ? 'block' : 'none';
+            });
+        }
+    </script>
+</body>
+
+</html>

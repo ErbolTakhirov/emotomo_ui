@@ -1,0 +1,545 @@
+[
+  {
+    "slug": "Tingyun",
+    "title": "Tingyun",
+    "folder": "tingyun",
+    "model3": "停云.model3.json",
+    "thumb": "tingyun/img.png",
+    "fit": {
+      "type": "height",
+      "ratio": 0.92
+    },
+    "voice_ru": "K99Q77fV8UB0On1M1Y4z",
+    "voice_en": "",
+    "voice_jup": "",
+    "data": {
+      "data_json": "tingyun/data.json",
+      "data_txt": "tingyun/data_txt.txt",
+      "expressions": [
+        {
+          "name": "tail",
+          "file": "tingyun/尾巴.exp3.json",
+          "description": "хвост"
+        },
+        {
+          "name": "heart_eyes",
+          "file": "tingyun/心心眼.exp3.json",
+          "description": "глаза сердечки"
+        },
+        {
+          "name": "blush",
+          "file": "tingyun/脸红.exp3.json",
+          "description": "румянец"
+        },
+        {
+          "name": "gloom",
+          "file": "tingyun/脸黑.exp3.json",
+          "description": "тень на лице"
+        }
+      ],
+      "motions": []
+    }
+  },
+  {
+    "slug": "Alexia",
+    "title": "Your AI GirlFriend",
+    "folder": "Alexia",
+    "model3": "Alexia.model3.json",
+    "thumb": "Alexia/img.webp",
+    "fit": {
+      "type": "height",
+      "ratio": 0.92
+    },
+    "voice_ru": "OKTTMobfxPQL1AC6SWNG",
+    "voice_en": "",
+    "voice_jup": "",
+    "data": {
+      "data_json": "Alexia/data.json",
+      "data_txt": "Alexia/data_txt.txt",
+      "expressions": [
+        {
+          "name": "acc1",
+          "file": "Alexia/bbt.exp3.json",
+          "description": "чупачупс во рту"
+        },
+        {
+          "name": "cool",
+          "file": "Alexia/dyj.exp3.json",
+          "description": "очки одеты"
+        },
+        {
+          "name": "awkward",
+          "file": "Alexia/h.exp3.json",
+          "description": "неловкость"
+        },
+        {
+          "name": "sad",
+          "file": "Alexia/k.exp3.json",
+          "description": "грусть"
+        },
+        {
+          "name": "embarrassed",
+          "file": "Alexia/lh.exp3.json",
+          "description": "смущение"
+        },
+        {
+          "name": "beaming",
+          "file": "Alexia/lzx.exp3.json",
+          "description": "сияние"
+        },
+        {
+          "name": "cool2",
+          "file": "Alexia/mj.exp3.json",
+          "description": "очки на макушке"
+        },
+        {
+          "name": "unknown",
+          "file": "Alexia/wh.exp3.json",
+          "description": "?"
+        },
+        {
+          "name": "fearful",
+          "file": "Alexia/sq.exp3.json",
+          "description": "испуг"
+        },
+        {
+          "name": "awestruck",
+          "file": "Alexia/xxy.exp3.json",
+          "description": "восторг"
+        },
+        {
+          "name": "dizzy",
+          "file": "Alexia/y.exp3.json",
+          "description": "головокружение"
+        },
+        {
+          "name": "other_costume",
+          "file": "Alexia/yf.exp3.json",
+          "description": "пижама"
+        },
+        {
+          "name": "other_costume_2",
+          "file": "Alexia/yfmz.exp3.json",
+          "description": "пижама с ушками"
+        },
+        {
+          "name": "eyes_1",
+          "file": "Alexia/yjys1.exp3.json",
+          "description": "глаза 1"
+        },
+        {
+          "name": "eyes_2",
+          "file": "Alexia/yjys2.exp3.json",
+          "description": "глаза 2"
+        },
+        {
+          "name": "stoic",
+          "file": "Alexia/zs1.exp3.json",
+          "description": "скрещенные руки"
+        }
+      ],
+      "motions": [
+        {
+          "name": "default",
+          "file": "Alexia/dh.motion3.json",
+          "description": "стандартное движение"
+        }
+      ]
+    }
+  },
+  {
+    "slug": "Ganyu",
+    "title": "Dragon girl",
+    "folder": "Dragon girl",
+    "model3": "ganyu.model3.json",
+    "thumb": "Dragon girl/img.png",
+    "fit": {
+      "type": "height",
+      "ratio": 0.92
+    },
+    "voice_ru": "KJ0qiVkh0OnR17miO9Fy",
+    "voice_en": "",
+    "voice_jup": "",
+    "data": {
+      "data_json": "Dragon girl/data.json",
+      "data_txt": "Dragon girl/data_txt.txt",
+      "expressions": [
+        {
+          "name": "angry",
+          "file": "Dragon girl/expressions/SHENGQI.exp3.json",
+          "description": "Злость"
+        },
+        {
+          "name": "star_eyes",
+          "file": "Dragon girl/expressions/XINGXINGYAN.exp3.json",
+          "description": "Глаза-звезды"
+        },
+        {
+          "name": "shy",
+          "file": "Dragon girl/expressions/HAIXIU.exp3.json",
+          "description": "Смущение"
+        },
+        {
+          "name": "dazed",
+          "file": "Dragon girl/expressions/CHIDAI.exp3.json",
+          "description": "Оцепенение"
+        },
+        {
+          "name": "gloom",
+          "file": "Dragon girl/expressions/LIANHEI.exp3.json",
+          "description": "Мрачность"
+        }
+      ],
+      "motions": [
+        {
+          "name": "motion_1",
+          "file": "Dragon girl/exp/1.motion3.json",
+          "description": ""
+        },
+        {
+          "name": "motion_2",
+          "file": "Dragon girl/exp/2.motion3.json",
+          "description": ""
+        },
+        {
+          "name": "motion_6",
+          "file": "Dragon girl/exp/6.motion3.json",
+          "description": ""
+        },
+        {
+          "name": "motion_7",
+          "file": "Dragon girl/exp/7.motion3.json",
+          "description": ""
+        },
+        {
+          "name": "motion_8",
+          "file": "Dragon girl/exp/8.motion3.json",
+          "description": ""
+        }
+      ]
+    }
+  },
+  {
+    "slug": "March 7th",
+    "title": "March 7th",
+    "folder": "March 7th",
+    "model3": "march 7th.model3.json",
+    "thumb": "March 7th/img.png",
+    "fit": {
+      "type": "height",
+      "ratio": 0.92
+    },
+    "voice_ru": "0L7QovlV9e1iTocF1spg ",
+    "voice_en": "",
+    "voice_jup": "",
+    "data": {
+      "data_json": "March 7th/data.json",
+      "data_txt": "March 7th/data_txt.txt",
+      "expressions": [
+        {
+          "name": "exp_1",
+          "file": "March 7th/exp/1.exp3.json",
+          "description": ""
+        },
+        {
+          "name": "exp_2",
+          "file": "March 7th/exp/2.exp3.json",
+          "description": ""
+        },
+        {
+          "name": "exp_3",
+          "file": "March 7th/exp/3.exp3.json",
+          "description": ""
+        },
+        {
+          "name": "exp_4",
+          "file": "March 7th/exp/4.exp3.json",
+          "description": ""
+        },
+        {
+          "name": "exp_5",
+          "file": "March 7th/exp/5.exp3.json",
+          "description": ""
+        },
+        {
+          "name": "exp_6",
+          "file": "March 7th/exp/6.exp3.json",
+          "description": ""
+        },
+        {
+          "name": "exp_7",
+          "file": "March 7th/exp/7.exp3.json",
+          "description": ""
+        },
+        {
+          "name": "exp_8",
+          "file": "March 7th/exp/8.exp3.json",
+          "description": ""
+        }
+      ],
+      "motions": []
+    }
+  },
+  {
+    "slug": "fuxuan",
+    "title": "Fu Xuan",
+    "folder": "fuxuan",
+    "model3": "fuxuan.model3.json",
+    "thumb": "fuxuan/img.png",
+    "fit": {
+      "type": "height",
+      "ratio": 0.92
+    },
+    "voice_ru": "K99Q77fV8UB0On1M1Y4z ",
+    "voice_en": "",
+    "voice_jup": "",
+    "data": {
+      "data_json": "fuxuan/data.json",
+      "data_txt": "fuxuan/data_txt.txt",
+      "expressions": [],
+      "motions": []
+    }
+  },
+  {
+    "slug": "ellot",
+    "title": "Ellot",
+    "folder": "ellot",
+    "model3": "ellot.model3.json",
+    "thumb": "ellot/img.png",
+    "fit": {
+      "type": "height",
+      "ratio": 0.92
+    },
+    "voice_ru": "RdoAc2gnahJ7uASB6CEr",
+    "voice_en": "",
+    "voice_jup": "",
+    "data": {
+      "data_json": "ellot/data.json",
+      "data_txt": "ellot/data_txt.txt",
+      "expressions": [
+        {
+          "name": "gamepad",
+          "file": "ellot/게임패드.exp3.json",
+          "description": "геймпад"
+        },
+        {
+          "name": "tears",
+          "file": "ellot/눈물.exp3.json",
+          "description": "слезы"
+        },
+        {
+          "name": "glasses_head",
+          "file": "ellot/머ри안경.exp3.json",
+          "description": "очки на голове"
+        },
+        {
+          "name": "sparkle_eyes",
+          "file": "ellot/반짝눈.exp3.json",
+          "description": "блестящие глаза"
+        },
+        {
+          "name": "face_glasses",
+          "file": "ellot/얼굴안경.exp3.json",
+          "description": "очки на лице"
+        },
+        {
+          "name": "gloom",
+          "file": "ellot/음침.exp3.json",
+          "description": "мрачность"
+        },
+        {
+          "name": "heart_eyes",
+          "file": "ellot/하트눈.exp3.json",
+          "description": "глаза-сердечки"
+        },
+        {
+          "name": "blush",
+          "file": "ellot/홍조.exp3.json",
+          "description": "румянец"
+        },
+        {
+          "name": "angry",
+          "file": "ellot/화남.exp3.json",
+          "description": "злость"
+        }
+      ],
+      "motions": [
+        {
+          "name": "scene1",
+          "file": "ellot/Scene1.motion3.json",
+          "description": ""
+        }
+      ]
+    }
+  },
+  {
+    "slug": "tubasa",
+    "title": "Tubasa",
+    "folder": "TUBASA_014",
+    "model3": "TUBASA_014.model3.json",
+    "thumb": "TUBASA_014/icon.jpg",
+    "fit": {
+      "type": "height",
+      "ratio": 0.92
+    },
+    "voice_ru": "KJ0qiVkh0OnR17miO9Fy",
+    "voice_en": "",
+    "voice_jup": "",
+    "data": {
+      "data_json": "",
+      "data_txt": "TUBASA_014/data_txt.txt",
+      "expressions": [],
+      "motions": []
+    }
+  },
+  {
+    "slug": "poblanc",
+    "title": "Poblanc",
+    "folder": "pb",
+    "model3": "Poblanc.model3.json",
+    "thumb": "pb/2838970a-acd3-4129-80bc-3ba24df732b6.png",
+    "fit": {
+      "type": "height",
+      "ratio": 0.92
+    },
+    "voice_ru": "m5wMwday2RxjnPKce5GV",
+    "voice_en": "",
+    "voice_jup": "",
+    "data": {
+      "data_json": "",
+      "data_txt": "pb/data_txt.txt",
+      "expressions": [],
+      "motions": []
+    }
+  },
+  {
+    "slug": "asuka",
+    "title": "Asuka",
+    "folder": "ASUKA",
+    "model3": "Asuka.model3.json",
+    "thumb": "ASUKA/ICON.PNG",
+    "fit": {
+      "type": "height",
+      "ratio": 0.92
+    },
+    "voice_ru": "RdoAc2gnahJ7uASB6CEr",
+    "voice_en": "",
+    "voice_jup": "",
+    "data": {
+      "data_json": "",
+      "data_txt": "ASUKA/data_txt.txt",
+      "expressions": [
+        {
+          "name": "coat_toggle",
+          "file": "ASUKA/EXPRESSIONS/coat toggle.exp3.json",
+          "description": "снять/надеть пальто"
+        },
+        {
+          "name": "gloom",
+          "file": "ASUKA/EXPRESSIONS/Gloom.exp3.json",
+          "description": "мрачность"
+        },
+        {
+          "name": "happy_sparkle",
+          "file": "ASUKA/EXPRESSIONS/Happy Sparkle.exp3.json",
+          "description": "счастливые искорки"
+        },
+        {
+          "name": "star_eyes",
+          "file": "ASUKA/EXPRESSIONS/Star Eyes Toggle.exp3.json",
+          "description": "глаза-звезды"
+        }
+      ],
+      "motions": [
+        {
+          "name": "cry",
+          "file": "ASUKA/ANIMATIONS/cry.motion3.json"
+        },
+        {
+          "name": "hand_wave",
+          "file": "ASUKA/ANIMATIONS/Hand wave.motion3.json"
+        }
+      ]
+    }
+  },
+  {
+    "slug": "osagegirl",
+    "title": "Osage Girl",
+    "folder": "おさげの少女/osagegirl",
+    "model3": "osagegirl.model3.json",
+    "thumb": "おさげの少女/img.png",
+    "voice_ru": "KJ0qiVkh0OnR17miO9Fy",
+    "voice_en": "",
+    "voice_jup": "",
+    "data": {
+      "data_txt": "おさげの少女/data_txt.txt",
+      "expressions": [
+        {
+          "name": "surprised",
+          "file": "eyes_bikkuri.exp3.json"
+        },
+        {
+          "name": "dizzy",
+          "file": "eyes_guruguru.exp3.json"
+        },
+        {
+          "name": "despair",
+          "file": "eyes_zetubou.exp3.json"
+        },
+        {
+          "name": "pale",
+          "file": "face_aozame.exp3.json"
+        }
+      ],
+      "motions": []
+    }
+  },
+  {
+    "slug": "little_police",
+    "title": "Little Police",
+    "folder": "小警察_vts",
+    "model3": "小警察.model3.json",
+    "thumb": "小警察_vts/icon.png",
+    "voice_ru": "kWtR3p3ixH4UwtrxLg82",
+    "voice_en": "",
+    "voice_jup": "",
+    "data": {
+      "data_txt": "小警察_vts/data_txt.txt",
+      "expressions": [
+        {
+          "name": "exp1",
+          "file": "expression1.exp3.json"
+        },
+        {
+          "name": "exp2",
+          "file": "expression2.exp3.json"
+        },
+        {
+          "name": "exp3",
+          "file": "expression3.exp3.json"
+        }
+      ],
+      "motions": []
+    }
+  },
+  {
+    "slug": "YuukaPajamas",
+    "title": "Yuuka Pajamas",
+    "type": "vrm",
+    "folder": "YuukaPajamas",
+    "model3": "YuukaPajamas6th103.vrm",
+    "thumb": "YuukaPajamas/thumb.png",
+    "fit": {
+      "type": "height",
+      "ratio": 1.4
+    },
+    "voice_ru": "KJ0qiVkh0OnR17miO9Fy",
+    "voice_en": "",
+    "voice_jup": "",
+    "data": {
+      "data_txt": "YuukaPajamas/data_txt.txt",
+      "expressions": [],
+      "motions": []
+    }
+  }
+]

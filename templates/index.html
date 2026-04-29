@@ -1,0 +1,1829 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EmoTomo — Talk to Anime Characters</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ─── BASE ─── */
+    :root {
+      --pink: #FF2D78;
+      --pink2: #ff6ba8;
+      --purple: #7B5CF0;
+      --purple2: #a78bfa;
+      --bg: #0b0c13;
+      --bg2: #111218;
+      --bg3: #17181f;
+      --border: rgba(255, 255, 255, 0.07);
+      --border2: rgba(255, 255, 255, 0.11);
+      --text: #ffffff;
+      --muted: rgba(255, 255, 255, 0.5);
+      --muted2: rgba(255, 255, 255, 0.28);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    /* ─── AURORA BG ─── */
+    .aurora {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .aurora-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.18;
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+
+    .aurora-blob:nth-child(1) {
+      width: 700px;
+      height: 500px;
+      background: var(--purple);
+      top: -200px;
+      left: -150px;
+      animation-delay: 0s;
+    }
+
+    .aurora-blob:nth-child(2) {
+      width: 500px;
+      height: 400px;
+      background: var(--pink);
+      top: 10%;
+      right: -100px;
+      animation-delay: -6s;
+    }
+
+    .aurora-blob:nth-child(3) {
+      width: 600px;
+      height: 400px;
+      background: #0ea5e9;
+      bottom: 0;
+      left: 30%;
+      opacity: 0.1;
+      animation-delay: -12s;
+    }
+
+    @keyframes drift {
+      from {
+        transform: translate(0, 0) scale(1);
+      }
+
+      to {
+        transform: translate(40px, 30px) scale(1.08);
+      }
+    }
+
+    /* ─── NOISE OVERLAY ─── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+    }
+
+    /* ─── UTILITY ─── */
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .grad-text {
+      background: linear-gradient(135deg, #fff 0%, var(--purple2) 50%, var(--pink2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(123, 92, 240, 0.12);
+      border: 1px solid rgba(123, 92, 240, 0.25);
+      border-radius: 50px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--purple2);
+      letter-spacing: 0.04em;
+    }
+
+    .tag-pill-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--purple2);
+      box-shadow: 0 0 6px var(--purple2);
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .4
+      }
+    }
+
+    /* ─── NAVBAR ─── */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid transparent;
+      transition: background 0.3s, border-color 0.3s, backdrop-filter 0.3s;
+    }
+
+    .navbar.scrolled {
+      background: rgba(11, 12, 19, 0.88);
+      border-color: var(--border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .nav-inner {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .nav-logo span {
+      color: var(--pink);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-ghost {
+      padding: 9px 18px;
+      border-radius: 10px;
+      background: transparent;
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .btn-pink {
+      padding: 9px 20px;
+      border-radius: 10px;
+      background: var(--pink);
+      border: none;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      box-shadow: 0 4px 24px rgba(255, 45, 120, 0.3);
+    }
+
+    .btn-pink:hover {
+      background: #ff4d8e;
+      box-shadow: 0 4px 32px rgba(255, 45, 120, 0.45);
+    }
+
+    .btn-pink:active {
+      transform: scale(0.97);
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 0 80px;
+      position: relative;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .hero-label {
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-size: clamp(38px, 5vw, 62px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      line-height: 1.65;
+      color: var(--muted);
+      max-width: 480px;
+      margin-bottom: 36px;
+    }
+
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-hero-main {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 12px;
+      background: var(--pink);
+      border: none;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      box-shadow: 0 6px 32px rgba(255, 45, 120, 0.4);
+    }
+
+    .btn-hero-main:hover {
+      background: #ff4d8e;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 40px rgba(255, 45, 120, 0.5);
+    }
+
+    .btn-hero-sec {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 24px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-hero-sec:hover {
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+      margin-top: 48px;
+      padding-top: 36px;
+      border-top: 1px solid var(--border);
+    }
+
+    .hero-stat-num {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 2px;
+    }
+
+    .hero-stat-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* Hero visual */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero-card-stack {
+      position: relative;
+      width: 460px;
+      height: 420px;
+    }
+
+    .hcard {
+      position: absolute;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      background: var(--bg3);
+      transition: transform 0.4s;
+    }
+
+    .hcard-img {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 72px;
+      background: linear-gradient(160deg, #1a1c2e 0%, #241535 50%, #1a2030 100%);
+    }
+
+    .hcard-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Задняя карточка — за главной, слегка видна */
+    .hcard-back {
+      width: 172px;
+      height: 232px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -55%) rotate(9deg);
+      opacity: 0.3;
+      z-index: 0;
+    }
+
+    /* Левая карточка — выглядывает слева */
+    .hcard-left {
+      width: 200px;
+      height: 270px;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%) rotate(-3deg);
+      opacity: 0.8;
+      z-index: 2;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Правая карточка — выглядывает справа */
+    .hcard-right {
+      width: 200px;
+      height: 270px;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%) rotate(3deg);
+      opacity: 0.8;
+      z-index: 2;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Главная карточка — центр, поверх всех */
+    .hcard-main {
+      width: 252px;
+      height: 342px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 3;
+      border-color: rgba(255, 45, 120, 0.28);
+      box-shadow:
+        0 0 0 1px rgba(255, 45, 120, 0.18),
+        0 28px 80px rgba(0, 0, 0, 0.75),
+        0 0 50px rgba(255, 45, 120, 0.07);
+    }
+
+    .hcard-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+      padding: 32px 14px 14px;
+    }
+
+    .hcard-name {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .hcard-sub {
+      font-size: 11px;
+      color: var(--pink);
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    /* Floating badge */
+    .hero-badge {
+      position: absolute;
+      background: rgba(18, 19, 28, 0.9);
+      border: 1px solid var(--border2);
+      border-radius: 14px;
+      padding: 10px 14px;
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      animation: float 4s ease-in-out infinite;
+      z-index: 5;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    .hero-badge-1 {
+      top: 20px;
+      right: -10px;
+      animation-delay: 0s;
+    }
+
+    .hero-badge-2 {
+      bottom: 50px;
+      left: -10px;
+      animation-delay: -2s;
+    }
+
+    .hbdot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .hbdot-green {
+      background: #22c55e;
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.7);
+    }
+
+    .hbdot-pink {
+      background: var(--pink);
+      box-shadow: 0 0 8px rgba(255, 45, 120, 0.7);
+    }
+
+    /* ─── SECTION HEADER ─── */
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-tag {
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 14px;
+    }
+
+    .section-sub {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ─── FEATURES ─── */
+    #features {
+      padding: 100px 0;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .feat-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px;
+      transition: border-color 0.25s, transform 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(123, 92, 240, 0.08) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .feat-card:hover {
+      border-color: rgba(123, 92, 240, 0.35);
+      transform: translateY(-4px);
+    }
+
+    .feat-card:hover::before {
+      opacity: 1;
+    }
+
+    .feat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: rgba(123, 92, 240, 0.12);
+      border: 1px solid rgba(123, 92, 240, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      color: var(--purple2);
+    }
+
+    .feat-icon svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .feat-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .feat-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ─── HOW IT WORKS ─── */
+    #how {
+      padding: 100px 0;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      position: relative;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 36px;
+      left: calc(16.66% + 20px);
+      right: calc(16.66% + 20px);
+      height: 1px;
+      background: linear-gradient(90deg, var(--border2), rgba(255, 255, 255, 0.04), var(--border2));
+      z-index: 0;
+    }
+
+    .step {
+      text-align: center;
+      padding: 32px 24px 28px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      position: relative;
+      z-index: 1;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+
+    .step:hover {
+      border-color: var(--border2);
+      transform: translateY(-3px);
+    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(255, 45, 120, 0.1);
+      border: 1.5px solid rgba(255, 45, 120, 0.25);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--pink);
+      margin: 0 auto 20px;
+    }
+
+    .step-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .step-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ─── CHARACTERS ─── */
+    #catalog-preview {
+      padding: 100px 0;
+      overflow: hidden;
+    }
+
+    .chars-marquee-wrap {
+      position: relative;
+      margin: 0 -24px;
+    }
+
+    .chars-marquee-wrap::before,
+    .chars-marquee-wrap::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 120px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .chars-marquee-wrap::before {
+      left: 0;
+      background: linear-gradient(90deg, var(--bg), transparent);
+    }
+
+    .chars-marquee-wrap::after {
+      right: 0;
+      background: linear-gradient(-90deg, var(--bg), transparent);
+    }
+
+    .chars-track {
+      display: flex;
+      gap: 16px;
+      width: max-content;
+      padding: 8px 24px;
+    }
+
+    .chars-track.animated {
+      animation: marquee 30s linear infinite;
+    }
+
+    .chars-track:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes marquee {
+      from {
+        transform: translateX(0)
+      }
+
+      to {
+        transform: translateX(-50%)
+      }
+    }
+
+    .char-preview-card {
+      width: 180px;
+      flex-shrink: 0;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .char-preview-card:hover {
+      border-color: rgba(255, 45, 120, 0.4);
+      transform: translateY(-4px);
+    }
+
+    .cpc-img {
+      width: 100%;
+      aspect-ratio: 2/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 44px;
+      background: linear-gradient(160deg, #1a1c2e, #241535);
+      position: relative;
+    }
+
+    .cpc-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+    }
+
+    .cpc-info {
+      padding: 12px 14px;
+    }
+
+    .cpc-name {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .cpc-src {
+      font-size: 11px;
+      color: var(--pink);
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    .chars-cta {
+      text-align: center;
+      margin-top: 48px;
+    }
+
+    /* ─── REVIEWS ─── */
+    #reviews {
+      padding: 100px 0;
+    }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .review-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      transition: border-color 0.2s;
+    }
+
+    .review-card:hover {
+      border-color: var(--border2);
+    }
+
+    .review-stars {
+      color: #fbbf24;
+      font-size: 13px;
+      letter-spacing: 2px;
+      margin-bottom: 14px;
+    }
+
+    .review-text {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.75);
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+
+    .review-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .review-av {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .review-name {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .review-handle {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* ─── CTA BANNER ─── */
+    #cta-section {
+      padding: 100px 0 80px;
+    }
+
+    .cta-banner {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 28px;
+      padding: 72px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 300px;
+      background: radial-gradient(ellipse, rgba(255, 45, 120, 0.1) 0%, transparent 70%);
+    }
+
+    .cta-title {
+      font-size: clamp(28px, 4vw, 46px);
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .cta-sub {
+      font-size: 16px;
+      color: var(--muted);
+      margin-bottom: 36px;
+      position: relative;
+    }
+
+    .cta-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px 0 40px;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-logo {
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .footer-logo span {
+      color: var(--pink);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      color: var(--muted);
+      transition: color 0.15s;
+    }
+
+    .footer-links a:hover {
+      color: var(--text);
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--muted2);
+    }
+
+    /* ─── AUTH MODAL ─── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      background: #13141c;
+      border: 1px solid var(--border2);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 400px;
+      padding: 32px 28px;
+      transform: translateY(16px) scale(0.98);
+      transition: transform 0.25s;
+      position: relative;
+    }
+
+    .modal-overlay.show .modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: none;
+      color: var(--muted);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .modal-close:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-logo {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .modal-logo span {
+      color: var(--pink);
+    }
+
+    .modal-tagline {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    .tab-row {
+      display: flex;
+      gap: 0;
+      margin-bottom: 24px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 4px;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 10px;
+      border-radius: 9px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .tab.active {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+    }
+
+    .auth-field {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      padding: 13px 16px;
+      margin-bottom: 10px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .auth-field:focus {
+      border-color: rgba(255, 45, 120, 0.4);
+    }
+
+    .auth-field::placeholder {
+      color: var(--muted2);
+    }
+
+    .auth-submit {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      background: var(--pink);
+      border: none;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.15s, transform 0.1s;
+      box-shadow: 0 4px 24px rgba(255, 45, 120, 0.35);
+    }
+
+    .auth-submit:hover {
+      background: #ff4d8e;
+    }
+
+    .auth-submit:active {
+      transform: scale(0.98);
+    }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 900px) {
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+
+      .hero-visual {
+        display: none;
+      }
+
+      .reviews-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .cta-banner {
+        padding: 48px 28px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .steps::before {
+        display: none;
+      }
+
+      .reviews-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-stats {
+        gap: 24px;
+      }
+
+      .hero-title {
+        font-size: 36px;
+      }
+
+      .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+      }
+    }
+
+    /* ─── ANIMATIONS ─── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .fade-up-delay-1 {
+      transition-delay: 0.1s;
+    }
+
+    .fade-up-delay-2 {
+      transition-delay: 0.2s;
+    }
+
+    .fade-up-delay-3 {
+      transition-delay: 0.3s;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- AURORA -->
+  <div class="aurora">
+    <div class="aurora-blob"></div>
+    <div class="aurora-blob"></div>
+    <div class="aurora-blob"></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="{% url 'core:home' %}" class="nav-logo">Emo<span>Tomo</span></a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#catalog-preview">Characters</a></li>
+      </ul>
+      <div class="nav-actions">
+        {% if user.is_authenticated %}
+        <div class="user-pill"
+          style="display:flex; align-items:center; gap:12px; padding:4px 16px 4px 4px; border:1px solid rgba(255,255,255,0.1); border-radius:100px; background:rgba(255,255,255,0.03);">
+          <div class="avatar-circle"
+            style="width:36px; height:36px; border-radius:50%; background:transparent; border:2px solid var(--pink); color:var(--pink); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px;">
+            <span class="dj-user-initial">U</span>
+          </div>
+          <span style="font-weight:600; font-size:16px; color:#fff;" class="dj-username">{{ user.username }}</span>
+        </div>
+        <button class="btn-pink" onclick="window.location.href='/dashboard/profile.html'">My profile →</button>
+        {% else %}
+        <button class="btn-ghost" onclick="window.location.href='login.html'">Sign in</button>
+        <button class="btn-pink" onclick="window.location.href='/catalog.html'">Get started →</button>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-inner">
+
+        <div class="hero-content">
+          <div class="hero-label fade-up">
+            <span class="tag-pill"><span class="tag-pill-dot"></span>Next-gen AI companion</span>
+          </div>
+          <h1 class="hero-title fade-up fade-up-delay-1">
+            Talk to anime<br>
+            <span class="grad-text">characters powered</span><br>
+            by real AI
+          </h1>
+          <p class="hero-sub fade-up fade-up-delay-2">
+            Live 2D avatars, emotional memory, voice synthesis in 20+ languages. Your favorite characters — now real
+            companions.
+          </p>
+          <div class="hero-ctas fade-up fade-up-delay-3" style="flex-direction: column; align-items: flex-start; gap: 16px;">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <button class="btn-hero-main" onclick="startTalkFlow(event)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+                Talk now
+              </button>
+              {% if user.is_authenticated %}{% else %}
+              <button class="btn-hero-sec" onclick="window.location.href='login.html?tab=register'">
+                Sign up free
+              </button>
+              {% endif %}
+            </div>
+            <label id="consent-wrap" style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); cursor: pointer; transition: color 0.3s; transform: translateX(0);">
+              <input type="checkbox" id="hero-consent" style="accent-color: var(--pink); cursor: pointer;">
+              I agree to the Terms of Service and understand this is an AI companion, not clinical therapy
+            </label>
+          </div>
+          <div class="hero-stats fade-up">
+            <div>
+              <div class="hero-stat-num" style="color:var(--pink)">12+</div>
+              <div class="hero-stat-label">Characters</div>
+            </div>
+            <div>
+              <div class="hero-stat-num">20+</div>
+              <div class="hero-stat-label">Languages</div>
+            </div>
+            <div>
+              <div class="hero-stat-num">4.9 ★</div>
+              <div class="hero-stat-label">Rating</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card stack -->
+        <div class="hero-visual fade-up fade-up-delay-2">
+          <div class="hero-card-stack" id="hero-card-stack">
+
+            <!-- Задняя карточка -->
+            <div class="hcard hcard-back">
+              <div class="hcard-img" id="hero-img-3">❄️</div>
+              <div class="hcard-overlay">
+                <div class="hcard-name" id="hero-name-3">-</div>
+                <div class="hcard-sub">-</div>
+              </div>
+            </div>
+
+            <!-- Левая карточка -->
+            <div class="hcard hcard-left">
+              <div class="hcard-img" id="hero-img-1">🌊</div>
+              <div class="hcard-overlay">
+                <div class="hcard-name" id="hero-name-1">-</div>
+                <div class="hcard-sub">-</div>
+              </div>
+            </div>
+
+            <!-- Правая карточка -->
+            <div class="hcard hcard-right">
+              <div class="hcard-img" id="hero-img-2">⚡</div>
+              <div class="hcard-overlay">
+                <div class="hcard-name" id="hero-name-2">-</div>
+                <div class="hcard-sub">-</div>
+              </div>
+            </div>
+
+            <!-- Главная карточка -->
+            <div class="hcard hcard-main">
+              <div class="hcard-img" id="hero-img-0">🌸</div>
+              <div class="hcard-overlay">
+                <div class="hcard-name" id="hero-name-0">-</div>
+                <div class="hcard-sub">-</div>
+              </div>
+            </div>
+
+            <div class="hero-badge hero-badge-1">
+              <div class="hbdot hbdot-green"></div>
+              Online now
+            </div>
+            <div class="hero-badge hero-badge-2">
+              <div class="hbdot hbdot-pink"></div>
+              AI voice on
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-tag"><span class="tag-pill">Features</span></div>
+        <h2 class="section-title">Everything you need<br><span class="grad-text">for real connection</span></h2>
+        <p class="section-sub">A full stack of technology that makes the conversation feel alive</p>
+      </div>
+      <div class="features-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="feat-card fade-up">
+          <div class="feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <path d="M8 21h8M12 17v4" />
+            </svg>
+          </div>
+          <div class="feat-title">Live2D Avatars</div>
+          <div class="feat-desc">Characters blink, move, and react — just like in your favorite anime game.</div>
+        </div>
+        <div class="feat-card fade-up fade-up-delay-1">
+          <div class="feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+            </svg>
+          </div>
+          <div class="feat-title">Emotional Memory</div>
+          <div class="feat-desc">Every character remembers past conversations and builds a real relationship with you
+            over time.</div>
+        </div>
+        <div class="feat-card fade-up fade-up-delay-2">
+          <div class="feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <path d="M15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14" />
+            </svg>
+          </div>
+          <div class="feat-title">Voice Synthesis</div>
+          <div class="feat-desc">Real-time TTS with emotional intonation — characters don't just speak, they feel.</div>
+        </div>
+        <div class="feat-card fade-up fade-up-delay-3">
+          <div class="feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" y1="12" x2="22" y2="12" />
+              <path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
+            </svg>
+          </div>
+          <div class="feat-title">20+ Languages</div>
+          <div class="feat-desc">Chat in English, Japanese, Russian, Korean, Chinese and more. Full localization for
+            every region.</div>
+        </div>
+        <div class="feat-card fade-up">
+          <div class="feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round">
+              <rect x="9" y="2" width="6" height="12" rx="3" />
+              <path d="M5 10a7 7 0 0014 0M12 19v3M9 22h6" />
+            </svg>
+          </div>
+          <div class="feat-title">Voice Input</div>
+          <div class="feat-desc">Speak naturally — the AI transcribes, understands, and responds in real time.
+            Hands-free mode included.</div>
+        </div>
+        <div class="feat-card fade-up fade-up-delay-1">
+          <div class="feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+            </svg>
+          </div>
+          <div class="feat-title">Ultra-Low Latency</div>
+          <div class="feat-desc">Sub-second response times. It feels like a phone call, not a chatbot. No awkward
+            pauses.</div>
+        </div>
+        <div class="feat-card fade-up fade-up-delay-2">
+          <div class="feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          </div>
+          <div class="feat-title">Safe & Private</div>
+          <div class="feat-desc">Conversations are encrypted and never shared. Your story stays between you and your
+            character.</div>
+        </div>
+        <div class="feat-card fade-up fade-up-delay-3">
+          <div class="feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="3" />
+              <line x1="12" y1="18" x2="12" y2="18" stroke-width="2.5" />
+            </svg>
+          </div>
+          <div class="feat-title">Mobile-First</div>
+          <div class="feat-desc">Optimized for iOS and Android. Full-screen immersive mode — your character fills the
+            screen.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-tag"><span class="tag-pill">How it works</span></div>
+        <h2 class="section-title">Three steps to<br><span class="grad-text">your first conversation</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step fade-up">
+          <div class="step-num">01</div>
+          <div class="step-title">Pick a character</div>
+          <div class="step-desc">Browse the catalog — dozens of characters from anime, games, and manga waiting for you.
+          </div>
+        </div>
+        <div class="step fade-up fade-up-delay-1">
+          <div class="step-num">02</div>
+          <div class="step-title">Start talking</div>
+          <div class="step-desc">Type or speak — your character replies with text and voice, staying true to their
+            personality.</div>
+        </div>
+        <div class="step fade-up fade-up-delay-2">
+          <div class="step-num">03</div>
+          <div class="step-title">Build the bond</div>
+          <div class="step-desc">The memory system grows with you — every session picks up right where you left off.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHARACTERS MARQUEE -->
+  <section id="catalog-preview">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-tag"><span class="tag-pill">Characters</span></div>
+        <h2 class="section-title">Meet the <span class="grad-text">cast</span></h2>
+      </div>
+    </div>
+    <div class="chars-marquee-wrap">
+      <div class="chars-track" id="chars-track">
+        <!-- dynamically loaded via js -->
+      </div>
+    </div>
+    <div class="chars-cta fade-up">
+      <button class="btn-pink" style="padding:13px 32px;font-size:15px"
+        onclick="window.location.href='/catalog.html'">View
+        all characters →</button>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section id="reviews">
+    <div class="container">
+      <div class="section-header fade-up">
+        <div class="section-tag"><span class="tag-pill">Reviews</span></div>
+        <h2 class="section-title">What users <span class="grad-text">are saying</span></h2>
+      </div>
+      <div class="reviews-grid">
+        <div class="review-card fade-up">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"I talked with Tingyun for 3 hours. She remembered everything from last time — felt
+            like a real friendship, not a bot."</div>
+          <div class="review-author">
+            <div class="review-av" style="background:rgba(255,45,120,0.15);color:var(--pink)">A</div>
+            <div>
+              <div class="review-name">Alex</div>
+              <div class="review-handle">@alex_fan</div>
+            </div>
+          </div>
+        </div>
+        <div class="review-card fade-up fade-up-delay-1">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"The voice synthesis is incredible. I feel like I'm in an interactive anime. Nothing
+            else comes close."</div>
+          <div class="review-author">
+            <div class="review-av" style="background:rgba(123,92,240,0.15);color:var(--purple2)">M</div>
+            <div>
+              <div class="review-name">Maria</div>
+              <div class="review-handle">@m_anime</div>
+            </div>
+          </div>
+        </div>
+        <div class="review-card fade-up fade-up-delay-2">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-text">"Finally a proper AI chat with anime characters. Beautiful design, fast, the
+            characters feel genuinely alive."</div>
+          <div class="review-author">
+            <div class="review-av" style="background:rgba(14,165,233,0.15);color:#38bdf8">K</div>
+            <div>
+              <div class="review-name">Kenji</div>
+              <div class="review-handle">@kenji_dev</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta-section">
+    <div class="container">
+      <div class="cta-banner fade-up">
+        <h2 class="cta-title">Ready to start?<br><span class="grad-text">Your character is waiting.</span></h2>
+        <p class="cta-sub">Free to start — no account required. Just open the catalog and begin.</p>
+        <div class="cta-actions">
+          <button class="btn-hero-main" onclick="window.location.href='/catalog.html'">
+            Browse characters
+          </button>
+          {% if user.is_authenticated %}{% else %}
+          <button class="btn-hero-sec" onclick="window.location.href='login.html?tab=register'">
+            Create account
+          </button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-logo">Emo<span>Tomo</span></div>
+        <div class="footer-links">
+          <a href="#features">Features</a>
+          <a href="{% url 'core:catalog' %}">Catalog</a>
+          <a href="{% url 'core:profile' %}">Profile</a>
+        </div>
+        <div class="footer-copy">© 2026 EmoTomo. All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- AUTH MODAL -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">×</button>
+      <div class="modal-logo">Emo<span>Tomo</span></div>
+      <div class="modal-tagline">Sign in to save your progress</div>
+      <div class="tab-row">
+        <button class="tab active" onclick="switchTab(this,'login')">Sign in</button>
+        <button class="tab" onclick="switchTab(this,'register')">Sign up</button>
+      </div>
+      <form id="form-login" class="auth-form" onsubmit="return false;">
+        <input class="auth-field" type="text" name="username" placeholder="Username / Email" required>
+        <input class="auth-field" type="password" name="password" placeholder="Password" required>
+        <button type="submit" class="auth-submit">Sign in</button>
+      </form>
+      <form id="form-register" class="auth-form" onsubmit="return false;" style="display:none">
+        <input class="auth-field" type="text" name="username" placeholder="Username" required>
+        <input class="auth-field" type="email" name="email" placeholder="Email" required>
+        <input class="auth-field" type="password" name="password" placeholder="Password" required>
+        <button type="submit" class="auth-submit">Create account</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    /* ── Navbar scroll ── */
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    /* ── Fade-up observer ── */
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    /* ── Auth modal ── */
+    function openModal(defaultTab = 'login') {
+      document.getElementById('auth-modal').classList.add('show');
+      if (defaultTab === 'register') switchTab(document.querySelectorAll('.tab')[1], 'register');
+      else switchTab(document.querySelectorAll('.tab')[0], 'login');
+    }
+    function closeModal() { document.getElementById('auth-modal').classList.remove('show'); }
+    document.getElementById('auth-modal').addEventListener('click', function (e) {
+      if (e.target === this) closeModal();
+    });
+
+    function switchTab(btn, form) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('form-login').style.display = form === 'login' ? '' : 'none';
+      document.getElementById('form-register').style.display = form === 'register' ? '' : 'none';
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    /* ── Auth API Logic & Setup ── */
+    document.addEventListener('DOMContentLoaded', () => {
+      const username = localStorage.getItem('username');
+      if (username && username !== 'Гость') {
+        const initialStr = username.charAt(0).toUpperCase();
+        document.querySelectorAll('.dj-user-initial').forEach(el => el.textContent = initialStr);
+      }
+    });
+
+    const loginForm = document.getElementById('form-login');
+    if (loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = loginForm.querySelector('button[type="submit"]');
+        const username = loginForm.querySelector('[name="username"]').value;
+        const password = loginForm.querySelector('[name="password"]').value;
+        btn.textContent = 'Signing in...';
+        btn.disabled = true;
+        try {
+          const r = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username_or_email: username, password })
+          });
+          const data = await r.json();
+          if (data.access_token) {
+            localStorage.setItem('auth_token', data.access_token);
+            localStorage.setItem('user_id', data.user?.id || 'anon');
+            localStorage.setItem('username', data.user?.username || username);
+            window.location.reload();
+          } else {
+            alert(data.detail || data.error || 'Login failed');
+            btn.disabled = false;
+            btn.textContent = 'Sign in';
+          }
+        } catch (err) {
+          alert('Network error');
+          btn.disabled = false;
+          btn.textContent = 'Sign in';
+        }
+      });
+    }
+
+    const registerForm = document.getElementById('form-register');
+    if (registerForm) {
+      registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = registerForm.querySelector('button[type="submit"]');
+        const username = registerForm.querySelector('[name="username"]').value;
+        const email = registerForm.querySelector('[name="email"]').value;
+        const password = registerForm.querySelector('[name="password"]').value;
+        btn.textContent = 'Creating account...';
+        btn.disabled = true;
+        try {
+          const r = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password })
+          });
+          const data = await r.json();
+          if (data.access_token) {
+            localStorage.setItem('auth_token', data.access_token);
+            localStorage.setItem('user_id', data.user?.id || 'anon');
+            localStorage.setItem('username', data.user?.username || username);
+            window.location.href = '/catalog.html';
+          } else {
+            alert(data.detail || data.error || 'Registration failed');
+            btn.disabled = false;
+            btn.textContent = 'Create account';
+          }
+        } catch (err) {
+          alert('Network error');
+          btn.disabled = false;
+          btn.textContent = 'Create account';
+        }
+      });
+    }
+
+    /* ── Load Dynamic Catalog Items ── */
+    (function () {
+      const MANIFEST_URL = '/media/2d_pers/models.json';
+      const charTrack = document.getElementById('chars-track');
+
+      fetch(MANIFEST_URL)
+        .then(r => r.json())
+        .then(raw => {
+          let allModels = Array.isArray(raw) ? raw : Object.values(raw);
+          if (!allModels || allModels.length === 0) return;
+
+          // Populate Hero Cards with top 4
+          for (let i = 0; i < Math.min(4, allModels.length); i++) {
+            const m = allModels[i];
+            const imgEl = document.getElementById('hero-img-' + i);
+            const nameEl = document.getElementById('hero-name-' + i);
+            if (imgEl && nameEl) {
+              nameEl.textContent = m.title || m.slug;
+              if (m.thumb) {
+                const thumbSrc = m.thumb.startsWith('/') ? m.thumb : '/media/2d_pers/' + m.thumb;
+                imgEl.innerHTML = `<img src="${thumbSrc}" alt="${m.slug}" />`;
+              }
+            }
+          }
+
+          // Populate Marquee
+          if (allModels.length < 5) {
+            let needed = 5;
+            while (allModels.length < needed) { allModels = [...allModels, ...allModels]; }
+          }
+
+          const loopSet = [...allModels, ...allModels];
+          let html = '';
+
+          loopSet.forEach(m => {
+            const title = m.title || m.slug || 'Character';
+            const href = `catalog.html?slug=${encodeURIComponent(m.slug)}`;
+            const thumb = m.thumb ? (m.thumb.startsWith('/') ? m.thumb : `/media/2d_pers/${m.thumb}`) : null;
+
+            let imgHtml = `<div class="cpc-img">✨</div>`;
+            if (thumb) {
+              imgHtml = `<div class="cpc-img"><img src="${thumb}" alt="${title}" loading="lazy"></div>`;
+            }
+
+            html += `
+          <div class="char-preview-card" onclick="window.location.href='${href}'">
+              ${imgHtml}
+              <div class="cpc-info">
+                  <div class="cpc-name">${title}</div>
+                  <div class="cpc-src">Live2D</div>
+              </div>
+          </div>
+          `;
+          });
+
+          if (charTrack) {
+            charTrack.innerHTML = html;
+            charTrack.classList.add('animated');
+          }
+        })
+        .catch(e => console.error("Could not load dynamic models:", e));
+    })();
+  </script>
+  <script>
+    function startTalkFlow(e) {
+      e.preventDefault();
+      const checkbox = document.getElementById('hero-consent');
+      const wrap = document.getElementById('consent-wrap');
+      if (!checkbox.checked) {
+        wrap.style.color = '#ff2d78';
+        wrap.style.transform = 'translateX(5px)';
+        setTimeout(() => wrap.style.transform = 'translateX(-5px)', 100);
+        setTimeout(() => wrap.style.transform = 'translateX(5px)', 200);
+        setTimeout(() => wrap.style.transform = 'translateX(0)', 300);
+        setTimeout(() => wrap.style.color = 'var(--muted)', 1000);
+        return;
+      }
+      localStorage.setItem('emotomo_therapy_consent_date', Date.now().toString());
+      window.location.href = '/catalog.html';
+    }
+  </script>
+</body>
+
+</html>

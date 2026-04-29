@@ -1,0 +1,46 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "停云.moc3",
+		"Textures": [
+			"停云.4096/texture_00.png"
+		],
+		"Physics": "停云.physics3.json",
+		"DisplayInfo": "停云.cdi3.json",
+		"Expressions": [
+			{
+				"Name": "tail",
+				"File": "尾巴.exp3.json"
+			},
+			{
+				"Name": "heart_eyes",
+				"File": "心心眼.exp3.json"
+			},
+			{
+				"Name": "blush",
+				"File": "脸红.exp3.json"
+			},
+			{
+				"Name": "gloom",
+				"File": "脸黑.exp3.json"
+			}
+		]
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": [
+				"ParamEyeROpen",
+				"ParamEyeRSmile",
+				"ParamEyeLOpen",
+				"ParamEyeLSmile"
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		}
+	]
+}

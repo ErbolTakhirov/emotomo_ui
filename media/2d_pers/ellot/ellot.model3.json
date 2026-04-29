@@ -1,0 +1,61 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "ellot.moc3",
+		"Textures": [
+			"ellot.8192/texture_00.png"
+		],
+		"Physics": "ellot.physics3.json",
+		"DisplayInfo": "ellot.cdi3.json",
+		"Expressions": [
+			{
+				"Name": "gamepad",
+				"File": "게임패드.exp3.json"
+			},
+			{
+				"Name": "tears",
+				"File": "눈물.exp3.json"
+			},
+			{
+				"Name": "glasses_head",
+				"File": "머리안경.exp3.json"
+			},
+			{
+				"Name": "sparkle_eyes",
+				"File": "반짝눈.exp3.json"
+			},
+			{
+				"Name": "face_glasses",
+				"File": "얼굴안경.exp3.json"
+			},
+			{
+				"Name": "gloom",
+				"File": "음침.exp3.json"
+			},
+			{
+				"Name": "heart_eyes",
+				"File": "하트눈.exp3.json"
+			},
+			{
+				"Name": "blush",
+				"File": "홍조.exp3.json"
+			},
+			{
+				"Name": "angry",
+				"File": "화남.exp3.json"
+			}
+		]
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		},
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": []
+		}
+	]
+}

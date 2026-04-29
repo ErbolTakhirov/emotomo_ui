@@ -1,0 +1,623 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ session.get_title }} - EmoTomo</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            background: linear-gradient(140deg, #0c0f14, #111827);
+            min-height: 100vh;
+            margin: 0;
+            color: #e5e7eb;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .nav-link {
+            color: #8b5cf6;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #a78bfa;
+        }
+
+        /* Chat Header */
+        .chat-header {
+            background: rgba(18, 20, 28, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .chat-header-info h1 {
+            color: #fff;
+            margin: 0 0 8px 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .chat-header-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #9aa0a6;
+        }
+
+        .meta-item.character {
+            color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        /* Action Buttons */
+        .chat-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e5e7eb;
+            padding: 10px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            border: none;
+            color: #fff;
+        }
+
+        .action-btn.primary:hover {
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+        }
+
+        .action-btn.danger {
+            color: #f87171;
+        }
+
+        .action-btn.danger:hover {
+            background: rgba(248, 113, 113, 0.1);
+            border-color: rgba(248, 113, 113, 0.3);
+        }
+
+        /* Messages Container */
+        .messages-container {
+            background: rgba(18, 20, 28, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 24px;
+            backdrop-filter: blur(12px);
+            margin-bottom: 24px;
+        }
+
+        .messages-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 85%;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            align-self: flex-end;
+        }
+
+        .message.assistant {
+            align-self: flex-start;
+        }
+
+        .message-bubble {
+            padding: 14px 18px;
+            border-radius: 18px;
+            line-height: 1.5;
+            font-size: 15px;
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.assistant .message-bubble {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e5e7eb;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #6b7280;
+            margin-top: 6px;
+            padding: 0 4px;
+        }
+
+        .message.user .message-time {
+            text-align: right;
+        }
+
+        .smile-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: #9aa0a6;
+            margin-left: 8px;
+        }
+
+        .smile-indicator.positive {
+            color: #22c55e;
+        }
+
+        .smile-indicator.negative {
+            color: #f87171;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9aa0a6;
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Continue Chat Button */
+        .continue-section {
+            display: flex;
+            justify-content: center;
+            padding: 20px 0;
+        }
+
+        .continue-btn {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            border: none;
+            padding: 14px 32px;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
+            transition: all 0.2s;
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(139, 92, 246, 0.5);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #1a1d26;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            width: min(420px, 90vw);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal h3 {
+            margin: 0 0 16px 0;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            margin-bottom: 16px;
+            outline: none;
+        }
+
+        .modal-input:focus {
+            border-color: #8b5cf6;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .modal-btn.cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e5e7eb;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: #fff;
+        }
+
+        .modal-btn.danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+        }
+
+        /* Stats Card */
+        .stats-card {
+            background: rgba(18, 20, 28, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(12px);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #9aa0a6;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-item.purple .stat-value {
+            color: #8b5cf6;
+        }
+
+        .stat-item.pink .stat-value {
+            color: #ff5aa5;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aurora"></div>
+    <div class="container">
+        <!-- Navigation -->
+        <div class="nav-bar">
+            <a href="{% url 'core:chat_history' %}" class="nav-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg>
+                Назад к истории
+            </a>
+            <a href="{% url 'core:dashboard' %}" class="nav-link">Кабинет</a>
+            <a href="{% url 'core:home' %}" class="nav-link">Главная</a>
+        </div>
+
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <h1 id="chat-title">{{ session.get_title }}</h1>
+                <div class="chat-header-meta">
+                    <span class="meta-item character">🎭 {{ session.character_slug }}</span>
+                    <span class="meta-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                            <line x1="16" y1="2" x2="16" y2="6" />
+                            <line x1="8" y1="2" x2="8" y2="6" />
+                            <line x1="3" y1="10" x2="21" y2="10" />
+                        </svg>
+                        {{ session.created_at|date:"d.m.Y H:i" }}
+                    </span>
+                    <span class="meta-item">
+                        💬 {{ messages_list|length }} сообщений
+                    </span>
+                </div>
+            </div>
+            <div class="chat-actions">
+                <button class="action-btn" onclick="openRenameModal()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                    Переименовать
+                </button>
+                <a href="/api/chat-export/{{ session.id }}/" class="action-btn" download>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    Экспорт
+                </a>
+                <button class="action-btn danger" onclick="openDeleteModal()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                    Удалить
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-card">
+            <div class="stat-item purple">
+                <div class="stat-value">{{ messages_list|length }}</div>
+                <div class="stat-label">Сообщений</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ session.created_at|timesince }}</div>
+                <div class="stat-label">Назад</div>
+            </div>
+            <div class="stat-item pink">
+                <div class="stat-value">{{ session.character_slug|slice:":10" }}</div>
+                <div class="stat-label">Персонаж</div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="messages-container">
+            <div class="messages-list">
+                {% if messages_list %}
+                {% for msg in messages_list %}
+                <div class="message {{ msg.role }}">
+                    <div class="message-bubble">{{ msg.content }}</div>
+                    <div class="message-time">
+                        {{ msg.created_at|date:"H:i" }}
+                        {% if msg.smile_value %}
+                        <span
+                            class="smile-indicator {% if msg.smile_value > 0 %}positive{% elif msg.smile_value < 0 %}negative{% endif %}">
+                            {% if msg.smile_value > 0 %}😊{% elif msg.smile_value < 0 %}😔{% else %}😐{% endif %} {{
+                                msg.smile_value|floatformat:2 }} </span>
+                                {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z" />
+                    </svg>
+                    <h3 style="color: #e5e7eb; margin: 0 0 8px 0;">Нет сообщений</h3>
+                    <p style="margin: 0;">В этом чате пока нет сообщений</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Continue Chat -->
+        <div class="continue-section">
+            <a href="/manga.html?slug={{ character_slug }}&session={{ session.id }}" class="continue-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                Продолжить беседу
+            </a>
+        </div>
+    </div>
+
+    <!-- Rename Modal -->
+    <div class="modal-overlay" id="rename-modal">
+        <div class="modal">
+            <h3>Переименовать чат</h3>
+            <input type="text" class="modal-input" id="new-title" value="{{ session.get_title }}"
+                placeholder="Название чата">
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeRenameModal()">Отмена</button>
+                <button class="modal-btn primary" onclick="saveRename()">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal-overlay" id="delete-modal">
+        <div class="modal">
+            <h3>Удалить чат?</h3>
+            <p style="color: #9aa0a6; margin: 0 0 20px 0;">Это действие нельзя отменить. Все сообщения будут потеряны.
+            </p>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeDeleteModal()">Отмена</button>
+                <button class="modal-btn danger" onclick="confirmDelete()">Удалить</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sessionId = {{ session.id }};
+        const csrfToken = '{{ csrf_token }}';
+
+        function openRenameModal() {
+            document.getElementById('rename-modal').classList.add('active');
+            document.getElementById('new-title').focus();
+        }
+
+        function closeRenameModal() {
+            document.getElementById('rename-modal').classList.remove('active');
+        }
+
+        function openDeleteModal() {
+            document.getElementById('delete-modal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-modal').classList.remove('active');
+        }
+
+        async function saveRename() {
+            const newTitle = document.getElementById('new-title').value.trim();
+            if (!newTitle) return;
+
+            try {
+                const resp = await fetch(`/api/chat-sessions/${sessionId}/rename/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({ title: newTitle })
+                });
+
+                if (resp.ok) {
+                    document.getElementById('chat-title').textContent = newTitle;
+                    closeRenameModal();
+                } else {
+                    alert('Ошибка при переименовании');
+                }
+            } catch (e) {
+                alert('Ошибка сети');
+            }
+        }
+
+        async function confirmDelete() {
+            try {
+                const resp = await fetch(`/api/chat-sessions/${sessionId}/delete/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    }
+                });
+
+                if (resp.ok) {
+                    window.location.href = '{% url "core:chat_history" %}';
+                } else {
+                    alert('Ошибка при удалении');
+                }
+            } catch (e) {
+                alert('Ошибка сети');
+            }
+        }
+
+        // Close modals on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeRenameModal();
+                closeDeleteModal();
+            }
+        });
+
+        // Close modals on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

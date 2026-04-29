@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in — EmoTomo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #0b0c13;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        :root {
+            --pink: #FF2D78;
+            --purple: #7B5CF0;
+            --bg2: #111219;
+            --bg3: #17181f;
+            --border: rgba(255, 255, 255, 0.07);
+            --border2: rgba(255, 255, 255, 0.11);
+            --muted: rgba(255, 255, 255, 0.45);
+            --muted2: rgba(255, 255, 255, 0.22);
+        }
+
+        /* ── Aurora ── */
+        .aurora {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .ab {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.15;
+            animation: drift 16s ease-in-out infinite alternate;
+        }
+
+        .ab1 {
+            width: 500px;
+            height: 400px;
+            background: var(--purple);
+            top: -150px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .ab2 {
+            width: 400px;
+            height: 350px;
+            background: var(--pink);
+            bottom: -100px;
+            right: -80px;
+            animation-delay: -8s;
+        }
+
+        @keyframes drift {
+            from {
+                transform: translate(0, 0)
+            }
+
+            to {
+                transform: translate(30px, 25px)
+            }
+        }
+
+        /* ── Card ── */
+        .card {
+            position: relative;
+            z-index: 1;
+            background: rgba(17, 18, 25, 0.92);
+            border: 1px solid var(--border2);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 420px;
+            padding: 36px 32px 40px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5);
+            animation: card-in 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        @keyframes card-in {
+            from {
+                opacity: 0;
+                transform: translateY(24px) scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ── Logo ── */
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+            color: #fff;
+        }
+
+        .logo span {
+            color: var(--pink);
+        }
+
+        .logo-sub {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 28px;
+        }
+
+        /* ── Tabs ── */
+        .tabs {
+            display: flex;
+            gap: 0;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            border-radius: 9px;
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .tab.active {
+            background: rgba(255, 255, 255, 0.09);
+            color: #fff;
+        }
+
+        /* ── Fields ── */
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .field-wrap {
+            position: relative;
+        }
+
+        .field-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--muted);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .field {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border2);
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            padding: 13px 16px;
+            outline: none;
+            transition: border-color 0.15s, background 0.15s;
+        }
+
+        .field:focus {
+            border-color: rgba(255, 45, 120, 0.45);
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .field::placeholder {
+            color: var(--muted2);
+        }
+
+        .field.error {
+            border-color: rgba(229, 72, 77, 0.6);
+        }
+
+        /* Password toggle */
+        .field-pw {
+            padding-right: 44px;
+        }
+
+        .pw-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 4px;
+            transition: color 0.15s;
+        }
+
+        .pw-toggle:hover {
+            color: #fff;
+        }
+
+        .pw-toggle svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Field error hint */
+        .field-hint {
+            font-size: 11px;
+            color: #f87171;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .field-hint.show {
+            display: block;
+        }
+
+        /* ── Divider ── */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0;
+            color: var(--muted2);
+            font-size: 12px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+
+
+        /* ── Submit ── */
+        .submit {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            background: var(--pink);
+            border: none;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+            box-shadow: 0 4px 24px rgba(255, 45, 120, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .submit:hover {
+            background: #ff4d8e;
+            box-shadow: 0 6px 32px rgba(255, 45, 120, 0.45);
+        }
+
+        .submit:active {
+            transform: scale(0.98);
+        }
+
+        .submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: none;
+        }
+
+        .submit.loading .spinner {
+            display: block;
+        }
+
+        .submit.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── Footer text ── */
+        .card-footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .card-footer a {
+            color: var(--pink);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .card-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* ── Forgot password ── */
+        .forgot {
+            text-align: right;
+            margin-top: -4px;
+            margin-bottom: 4px;
+        }
+
+        .forgot a {
+            font-size: 12px;
+            color: var(--muted);
+            cursor: pointer;
+            transition: color 0.15s;
+            text-decoration: none;
+        }
+
+        .forgot a:hover {
+            color: #fff;
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #1e1f2a;
+            border: 1px solid var(--border2);
+            border-radius: 50px;
+            padding: 10px 22px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #fff;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 99;
+            transition: opacity 0.2s, transform 0.2s;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.success {
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #4ade80;
+        }
+
+        .toast.error {
+            border-color: rgba(229, 72, 77, 0.3);
+            color: #f87171;
+        }
+
+        /* ── Back link ── */
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .back-link:hover {
+            color: #fff;
+        }
+
+        .back-link svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ── Strength bar ── */
+        .strength-wrap {
+            margin-top: 8px;
+            display: none;
+        }
+
+        .strength-wrap.show {
+            display: block;
+        }
+
+        .strength-bar {
+            height: 3px;
+            border-radius: 2px;
+            background: var(--border2);
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+
+        .strength-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s, background 0.3s;
+        }
+
+        .strength-label {
+            font-size: 11px;
+            color: var(--muted2);
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 28px 20px 32px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="aurora">
+        <div class="ab ab1"></div>
+        <div class="ab ab2"></div>
+    </div>
+
+    <a href="index.html" class="back-link">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M10 3L5 8l5 5" />
+        </svg>
+        Back to home
+    </a>
+
+    <div class="card">
+        <div class="logo" onclick="logoClick()" style="cursor:pointer">Emo<span>Tomo</span></div>
+        <div class="logo-sub" id="card-sub">Welcome back — your characters are waiting</div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" id="tab-login" onclick="switchTab('login')">Sign in</button>
+            <button class="tab" id="tab-register" onclick="switchTab('register')">Sign up</button>
+        </div>
+
+        <!-- ── LOGIN FORM ── -->
+        <div id="form-login">
+
+
+            <div class="field-group">
+                <div>
+                    <label class="field-label">Email</label>
+                    <input class="field" id="l-email" type="email" placeholder="you@example.com" autocomplete="email">
+                    <div class="field-hint" id="l-email-hint"></div>
+                </div>
+                <div>
+                    <label class="field-label">Password</label>
+                    <div class="field-wrap">
+                        <input class="field field-pw" id="l-pass" type="password" placeholder="••••••••"
+                            autocomplete="current-password">
+                        <button class="pw-toggle" type="button" onclick="togglePw('l-pass', this)" tabindex="-1">
+                            <svg id="l-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="field-hint" id="l-pass-hint"></div>
+                </div>
+            </div>
+
+            <div class="forgot"><a onclick="showForgot()">Forgot password?</a></div>
+
+            <button class="submit" id="btn-login" onclick="doLogin()">
+                <div class="spinner"></div>
+                <span class="btn-text">Sign in</span>
+            </button>
+
+            <div class="card-footer">
+                Don't have an account? <a onclick="switchTab('register')">Sign up free</a>
+            </div>
+        </div>
+
+        <!-- ── REGISTER FORM ── -->
+        <div id="form-register" style="display:none">
+
+
+            <div class="field-group">
+                <div>
+                    <label class="field-label">Username</label>
+                    <input class="field" id="r-name" type="text" placeholder="coolname123" autocomplete="username">
+                    <div class="field-hint" id="r-name-hint"></div>
+                </div>
+                <div>
+                    <label class="field-label">Email</label>
+                    <input class="field" id="r-email" type="email" placeholder="you@example.com" autocomplete="email">
+                    <div class="field-hint" id="r-email-hint"></div>
+                </div>
+                <div>
+                    <label class="field-label">Password</label>
+                    <div class="field-wrap">
+                        <input class="field field-pw" id="r-pass" type="password" placeholder="Min. 6 characters"
+                            autocomplete="new-password" oninput="checkStrength(this.value)">
+                        <button class="pw-toggle" type="button" onclick="togglePw('r-pass', this)" tabindex="-1">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="strength-wrap" id="strength-wrap">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strength-fill"></div>
+                        </div>
+                        <div class="strength-label" id="strength-label"></div>
+                    </div>
+                    <div class="field-hint" id="r-pass-hint"></div>
+                </div>
+            </div>
+
+            <button class="submit" id="btn-register" onclick="doRegister()">
+                <div class="spinner"></div>
+                <span class="btn-text">Create account</span>
+            </button>
+
+            <div class="card-footer">
+                By signing up you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.<br>
+                Already have an account? <a onclick="switchTab('login')">Sign in</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        /* ── TAB SWITCH ── */
+        function switchTab(tab) {
+            const isLogin = tab === 'login';
+            document.getElementById('tab-login').classList.toggle('active', isLogin);
+            document.getElementById('tab-register').classList.toggle('active', !isLogin);
+            document.getElementById('form-login').style.display = isLogin ? '' : 'none';
+            document.getElementById('form-register').style.display = isLogin ? 'none' : '';
+            document.getElementById('card-sub').textContent = isLogin
+                ? 'Welcome back — your characters are waiting'
+                : 'Join EmoTomo and meet your characters';
+            clearErrors();
+        }
+
+        /* ── VALIDATION ── */
+        function setError(id, msg) {
+            const field = document.getElementById(id);
+            const hint = document.getElementById(id + '-hint');
+            if (field) field.classList.add('error');
+            if (hint) { hint.textContent = msg; hint.classList.add('show'); }
+        }
+        function clearErrors() {
+            document.querySelectorAll('.field').forEach(f => f.classList.remove('error'));
+            document.querySelectorAll('.field-hint').forEach(h => { h.textContent = ''; h.classList.remove('show'); });
+        }
+
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        /* ── PASSWORD TOGGLE ── */
+        function togglePw(fieldId, btn) {
+            const field = document.getElementById(fieldId);
+            const isText = field.type === 'text';
+            field.type = isText ? 'password' : 'text';
+            btn.querySelector('svg').innerHTML = isText
+                ? '<path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/>'
+                : '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+        }
+
+        /* ── PASSWORD STRENGTH ── */
+        function checkStrength(val) {
+            const wrap = document.getElementById('strength-wrap');
+            const fill = document.getElementById('strength-fill');
+            const label = document.getElementById('strength-label');
+            if (!val) { wrap.classList.remove('show'); return; }
+            wrap.classList.add('show');
+
+            let score = 0;
+            if (val.length >= 6) score++;
+            if (val.length >= 10) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            const levels = [
+                { w: '20%', bg: '#ef4444', text: 'Very weak' },
+                { w: '40%', bg: '#f97316', text: 'Weak' },
+                { w: '60%', bg: '#eab308', text: 'Fair' },
+                { w: '80%', bg: '#22c55e', text: 'Strong' },
+                { w: '100%', bg: '#10b981', text: 'Very strong' },
+            ];
+            const lvl = levels[Math.min(score, 4)];
+            fill.style.width = lvl.w;
+            fill.style.background = lvl.bg;
+            label.textContent = lvl.text;
+            label.style.color = lvl.bg;
+        }
+
+        /* ── LOADING STATE ── */
+        function setLoading(btnId, loading) {
+            const btn = document.getElementById(btnId);
+            btn.disabled = loading;
+            btn.classList.toggle('loading', loading);
+        }
+
+        /* ── TOAST ── */
+        let toastTimer;
+        function showToast(msg, type = '') {
+            const el = document.getElementById('toast');
+            el.textContent = msg;
+            el.className = `toast show ${type}`;
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        /* ── SAVE AUTH ── */
+        function saveAuth(data, fallbackName) {
+            const tk = data.access_token || data.token;
+            localStorage.setItem('auth_token', tk);
+            if (data.user) {
+                localStorage.setItem('username', data.user.username || fallbackName);
+                localStorage.setItem('user_id', data.user.id || '');
+                localStorage.setItem('email', data.user.email || '');
+            } else {
+                localStorage.setItem('username', data.username || fallbackName);
+                localStorage.setItem('user_id', data.user_id || '');
+                localStorage.setItem('email', data.email || '');
+            }
+        }
+
+        /* ── REDIRECT AFTER AUTH ── */
+        function redirectAfterAuth() {
+            const next = new URLSearchParams(window.location.search).get('next');
+            window.location.href = next || 'catalog.html';
+        }
+
+        /* ── LOGIN ── */
+        async function doLogin() {
+            clearErrors();
+            const email = document.getElementById('l-email').value.trim();
+            const pass = document.getElementById('l-pass').value;
+            let valid = true;
+
+            if (!email) { setError('l-email', 'Enter your email'); valid = false; }
+            else if (!validateEmail(email)) { setError('l-email', 'Invalid email format'); valid = false; }
+            if (!pass) { setError('l-pass', 'Enter your password'); valid = false; }
+            if (!valid) return;
+
+            setLoading('btn-login', true);
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username_or_email: email, password: pass })
+                });
+                const data = await res.json();
+
+                if (res.ok && (data.access_token || data.token)) {
+                    saveAuth(data, email.split('@')[0]);
+                    showToast('Welcome back!', 'success');
+                    setTimeout(redirectAfterAuth, 800);
+                } else {
+                    const msg = data.message || data.detail || 'Incorrect email or password';
+                    setError('l-pass', msg);
+                    showToast(msg, 'error');
+                }
+            } catch {
+                showToast('Connection error — try again', 'error');
+            } finally {
+                setLoading('btn-login', false);
+            }
+        }
+
+        /* ── REGISTER ── */
+        async function doRegister() {
+            clearErrors();
+            const name = document.getElementById('r-name').value.trim();
+            const email = document.getElementById('r-email').value.trim();
+            const pass = document.getElementById('r-pass').value;
+            let valid = true;
+
+            if (!name) { setError('r-name', 'Enter a username'); valid = false; }
+            else if (name.length < 3) { setError('r-name', 'Min. 3 characters'); valid = false; }
+            if (!email) { setError('r-email', 'Enter your email'); valid = false; }
+            else if (!validateEmail(email)) { setError('r-email', 'Invalid email format'); valid = false; }
+            if (!pass) { setError('r-pass', 'Enter a password'); valid = false; }
+            else if (pass.length < 6) { setError('r-pass', 'Min. 6 characters'); valid = false; }
+            if (!valid) return;
+
+            setLoading('btn-register', true);
+            try {
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: name, email, password: pass })
+                });
+                const data = await res.json();
+
+                if (res.ok && (data.access_token || data.token)) {
+                    saveAuth(data, name);
+                    showToast('Account created!', 'success');
+                    setTimeout(() => window.location.href = 'onboarding.html', 800);
+                } else {
+                    const msg = data.message || data.detail || 'Registration failed';
+                    // Показать ошибку на нужном поле
+                    if (msg.toLowerCase().includes('email')) setError('r-email', msg);
+                    else if (msg.toLowerCase().includes('user')) setError('r-name', msg);
+                    else setError('r-pass', msg);
+                    showToast(msg, 'error');
+                }
+            } catch {
+                showToast('Connection error — try again', 'error');
+            } finally {
+                setLoading('btn-register', false);
+            }
+        }
+
+
+
+        /* ── FORGOT PASSWORD ── */
+        function showForgot() {
+            const email = document.getElementById('l-email').value.trim();
+            if (!email || !validateEmail(email)) {
+                setError('l-email', 'Enter your email first');
+                return;
+            }
+            fetch('/api/auth/forgot-password/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            }).then(() => {
+                showToast('Reset link sent to ' + email, 'success');
+            }).catch(() => {
+                showToast('Connection error', 'error');
+            });
+        }
+
+        /* ── KEYBOARD ── */
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Enter') {
+                const isLogin = document.getElementById('form-login').style.display !== 'none';
+                if (isLogin) doLogin(); else doRegister();
+            }
+        });
+
+        /* ── INIT: redirect if already logged in ── */
+        if (localStorage.getItem('auth_token')) {
+            window.location.href = 'catalog.html';
+        }
+
+        /* ── URL param: ?tab=register ── */
+        if (new URLSearchParams(window.location.search).get('tab') === 'register') {
+            switchTab('register');
+        }
+    </script>
+  <script src="/static/utils.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Verification - EmoTomo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a1a2a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        /* Aurora background effect */
+        .aurora {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .aurora::before,
+        .aurora::after {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(ellipse at center, 
+                rgba(138, 43, 226, 0.15) 0%, 
+                rgba(255, 0, 128, 0.1) 25%, 
+                transparent 50%);
+            animation: aurora-drift 15s ease-in-out infinite alternate;
+        }
+
+        .aurora::after {
+            background: radial-gradient(ellipse at center, 
+                rgba(0, 200, 255, 0.1) 0%, 
+                rgba(138, 43, 226, 0.08) 30%, 
+                transparent 50%);
+            animation-delay: -7s;
+            animation-direction: alternate-reverse;
+        }
+
+        @keyframes aurora-drift {
+            0% { transform: translate(-25%, -25%) rotate(0deg); }
+            100% { transform: translate(0%, 0%) rotate(10deg); }
+        }
+
+        /* Main container */
+        .age-gate-container {
+            position: relative;
+            z-index: 10;
+            background: rgba(20, 20, 40, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 50px 40px;
+            max-width: 480px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 
+                0 25px 80px rgba(0, 0, 0, 0.5),
+                0 0 100px rgba(138, 43, 226, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        /* Logo */
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #ff007a, #a855f7, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.4);
+        }
+
+        .logo span {
+            color: #fff;
+            -webkit-text-fill-color: #fff;
+        }
+
+        /* Warning icon */
+        .warning-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, #ff007a, #a855f7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            box-shadow: 0 10px 40px rgba(168, 85, 247, 0.4);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 10px 40px rgba(168, 85, 247, 0.4); }
+            50% { box-shadow: 0 10px 60px rgba(168, 85, 247, 0.6); }
+        }
+
+        /* Title */
+        .title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        /* Description */
+        .description {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: 35px;
+        }
+
+        .description strong {
+            color: #a855f7;
+        }
+
+        /* Age requirement badge */
+        .age-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff007a, #a855f7);
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 800;
+            padding: 12px 30px;
+            border-radius: 50px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 25px rgba(168, 85, 247, 0.4);
+        }
+
+        /* Buttons container */
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        /* Button styles */
+        .btn {
+            flex: 1;
+            padding: 16px 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #a855f7, #06b6d4);
+            color: #fff;
+            box-shadow: 0 5px 25px rgba(168, 85, 247, 0.4);
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(168, 85, 247, 0.5);
+        }
+
+        .btn-deny {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-deny:hover {
+            background: rgba(255, 0, 0, 0.2);
+            border-color: rgba(255, 0, 0, 0.4);
+            color: #ff6b6b;
+        }
+
+        /* Legal text */
+        .legal-text {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+            line-height: 1.5;
+        }
+
+        .legal-text a {
+            color: #a855f7;
+            text-decoration: none;
+        }
+
+        .legal-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Denied state */
+        .denied-container {
+            display: none;
+        }
+
+        .denied-container.active {
+            display: block;
+        }
+
+        .age-gate-container.denied .main-content {
+            display: none;
+        }
+
+        .denied-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .denied-title {
+            font-size: 1.5rem;
+            color: #ff6b6b;
+            margin-bottom: 15px;
+        }
+
+        .denied-text {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 25px;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 12px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .age-gate-container {
+                padding: 35px 25px;
+                margin: 20px;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="aurora"></div>
+
+    <div class="age-gate-container" id="ageGateContainer">
+        <!-- Main content -->
+        <div class="main-content">
+            <div class="logo">Emo<span>Tomo</span></div>
+            
+            <div class="warning-icon">🔞</div>
+            
+            <h1 class="title">Age Verification Required</h1>
+            
+            <p class="description">
+                This platform contains AI-generated content intended for <strong>mature audiences</strong>. 
+                By continuing, you confirm that you meet the minimum age requirement for your region.
+            </p>
+            
+            <div class="age-badge">16+</div>
+            
+            <div class="buttons">
+                <button class="btn btn-confirm" id="btnConfirm">
+                    Yes, I'm 16+
+                </button>
+                <button class="btn btn-deny" id="btnDeny">
+                    No, I'm under 16
+                </button>
+            </div>
+            
+            <p class="legal-text">
+                By clicking "Yes, I'm 16+", you agree to our 
+                <a href="#">Terms of Service</a> and 
+                <a href="#">Privacy Policy</a>. 
+                We use cookies to remember your age verification.
+            </p>
+        </div>
+
+        <!-- Denied state -->
+        <div class="denied-container" id="deniedContainer">
+            <div class="denied-icon">🚫</div>
+            <h2 class="denied-title">Access Denied</h2>
+            <p class="denied-text">
+                Sorry, you must be at least 16 years old to access EmoTomo.<br>
+                Please come back when you're older!
+            </p>
+            <button class="btn-back" onclick="window.location.href='https://google.com'">
+                Leave Site
+            </button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const AGE_VERIFIED_KEY = 'emotomo_age_verified';
+            const AGE_DENIED_KEY = 'emotomo_age_denied';
+            
+            const container = document.getElementById('ageGateContainer');
+            const btnConfirm = document.getElementById('btnConfirm');
+            const btnDeny = document.getElementById('btnDeny');
+            const deniedContainer = document.getElementById('deniedContainer');
+            
+            // Check if already denied
+            if (localStorage.getItem(AGE_DENIED_KEY) === 'true') {
+                showDenied();
+            }
+            
+            // Confirm button
+            btnConfirm.addEventListener('click', function() {
+                // Save verification
+                localStorage.setItem(AGE_VERIFIED_KEY, 'true');
+                localStorage.setItem('emotomo_age_verified_date', new Date().toISOString());
+                
+                // Remove denied flag if exists
+                localStorage.removeItem(AGE_DENIED_KEY);
+                
+                // Redirect to main page
+                window.location.href = '/';
+            });
+            
+            // Deny button
+            btnDeny.addEventListener('click', function() {
+                localStorage.setItem(AGE_DENIED_KEY, 'true');
+                showDenied();
+            });
+            
+            function showDenied() {
+                container.classList.add('denied');
+                deniedContainer.classList.add('active');
+            }
+        })();
+    </script>
+</body>
+
+</html>
