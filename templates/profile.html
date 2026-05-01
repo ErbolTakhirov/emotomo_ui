@@ -810,6 +810,12 @@
         }
 
         /* ── MOBILE ── */
+        @media (max-width: 768px) {
+            .page {
+                padding: 28px 18px 60px;
+            }
+        }
+
         @media (max-width: 640px) {
             .stats {
                 grid-template-columns: repeat(2, 1fr);
@@ -836,6 +842,193 @@
             .danger-zone {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .navbar {
+                padding: 0 14px;
+                height: 56px;
+            }
+
+            .page {
+                padding: 20px 12px 60px;
+            }
+
+            .profile-header {
+                padding-bottom: 20px;
+                margin-bottom: 20px;
+            }
+
+            .av {
+                width: 72px;
+                height: 72px;
+                font-size: 26px;
+            }
+
+            .profile-name {
+                font-size: 20px;
+            }
+
+            .profile-email {
+                font-size: 12px;
+            }
+
+            .profile-tags {
+                gap: 6px;
+            }
+
+            .tag {
+                font-size: 10px;
+                padding: 3px 10px;
+            }
+
+            .stats {
+                gap: 8px;
+            }
+
+            .stat {
+                padding: 14px 16px;
+                border-radius: 12px;
+            }
+
+            .stat-num {
+                font-size: 20px;
+            }
+
+            .stat-desc {
+                font-size: 11px;
+            }
+
+            .panel {
+                padding: 16px;
+                border-radius: 14px;
+            }
+
+            .setting-row {
+                padding: 9px 8px;
+            }
+
+            .setting-left {
+                font-size: 13px;
+                gap: 8px;
+            }
+
+            .setting-icon {
+                width: 28px;
+                height: 28px;
+            }
+
+            .modal {
+                padding: 22px 18px;
+                border-radius: 18px;
+            }
+
+            .danger-zone {
+                padding: 16px;
+                border-radius: 14px;
+            }
+
+            .danger-text h4 {
+                font-size: 13px;
+            }
+
+            .danger-text p {
+                font-size: 11px;
+            }
+
+            .btn-sm {
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+
+            .profile-actions {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .profile-actions .btn-sm {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .grid2 {
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .page {
+                padding: 16px 10px 50px;
+            }
+
+            .av {
+                width: 64px;
+                height: 64px;
+                font-size: 22px;
+            }
+
+            .profile-name {
+                font-size: 18px;
+            }
+
+            .stats {
+                gap: 6px;
+            }
+
+            .stat {
+                padding: 12px;
+            }
+
+            .stat-num {
+                font-size: 18px;
+            }
+
+            .char-row {
+                padding: 8px;
+                gap: 10px;
+            }
+
+            .char-em {
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
+            }
+
+            .char-name {
+                font-size: 13px;
+            }
+
+            .act-text {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .navbar {
+                padding: 0 10px;
+                height: 52px;
+            }
+
+            .nav-logo {
+                font-size: 17px;
+            }
+
+            .page {
+                padding: 14px 8px 40px;
+            }
+
+            .profile-header {
+                gap: 12px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .btn-logout {
+                font-size: 13px;
+                padding: 11px;
             }
         }
     </style>

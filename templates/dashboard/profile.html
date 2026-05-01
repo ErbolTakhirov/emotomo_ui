@@ -43,6 +43,18 @@
             --red: #ef4444;
         }
 
+        /* ── LOADING SKELETON ── */
+        .skel {
+            background: linear-gradient(90deg, var(--bg3) 25%, rgba(255,255,255,0.05) 50%, var(--bg3) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 6px;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
         /* ── NAVBAR ── */
         .navbar {
             position: sticky;
@@ -136,10 +148,17 @@
             box-shadow: 0 0 0 4px rgba(255, 45, 120, 0.1);
             cursor: pointer;
             transition: box-shadow 0.2s;
+            overflow: hidden;
         }
 
         .av:hover {
             box-shadow: 0 0 0 6px rgba(255, 45, 120, 0.18);
+        }
+
+        .av img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .av-badge {
@@ -177,7 +196,14 @@
         .profile-email {
             font-size: 13px;
             color: var(--muted);
-            margin-bottom: 12px;
+            margin-bottom: 4px;
+        }
+
+        .profile-bio {
+            font-size: 13px;
+            color: var(--muted2);
+            margin-bottom: 8px;
+            line-height: 1.4;
         }
 
         .profile-tags {
@@ -339,6 +365,33 @@
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 20px 22px;
+        }
+
+        /* ── INFO ROW ── */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            font-size: 13px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+        .info-value {
+            font-size: 13px;
+            color: #fff;
+            font-weight: 600;
+        }
+        .info-value.empty {
+            color: var(--muted2);
+            font-style: italic;
+            font-weight: 400;
         }
 
         /* ── CHARACTER LIST ── */
@@ -662,11 +715,13 @@
             border: 1px solid var(--border2);
             border-radius: 22px;
             width: 100%;
-            max-width: 420px;
+            max-width: 480px;
             padding: 28px 26px;
             position: relative;
             transform: translateY(16px) scale(0.97);
             transition: transform 0.25s;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .modal-bg.show .modal {
@@ -704,7 +759,7 @@
         .field-group {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
             margin-bottom: 20px;
         }
 
@@ -739,6 +794,11 @@
             color: var(--muted2);
         }
 
+        textarea.field {
+            resize: vertical;
+            min-height: 70px;
+        }
+
         .modal-submit {
             width: 100%;
             padding: 13px;
@@ -750,11 +810,27 @@
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            transition: background 0.15s;
+            transition: background 0.15s, opacity 0.15s;
         }
 
         .modal-submit:hover {
             background: #ff4d8e;
+        }
+
+        .modal-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .field-error {
+            font-size: 11px;
+            color: var(--red);
+            margin-top: 4px;
+            display: none;
+        }
+
+        .field-error.show {
+            display: block;
         }
 
         /* ── TOAST ── */
@@ -792,6 +868,34 @@
             border-color: rgba(239, 68, 68, 0.25);
         }
 
+        /* ── LOADING OVERLAY ── */
+        .loading-overlay {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            gap: 16px;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--pink);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
         /* ── MOBILE ── */
         @media (max-width: 640px) {
             .stats {
@@ -821,6 +925,96 @@
                 align-items: flex-start;
             }
         }
+
+        @media (max-width: 430px) {
+            .navbar {
+                padding: 0 14px;
+                height: 56px;
+            }
+
+            .page {
+                padding: 20px 12px 60px;
+            }
+
+            .av {
+                width: 72px;
+                height: 72px;
+                font-size: 26px;
+            }
+
+            .profile-name {
+                font-size: 20px;
+            }
+
+            .stats {
+                gap: 8px;
+            }
+
+            .stat {
+                padding: 14px 16px;
+                border-radius: 12px;
+            }
+
+            .stat-num {
+                font-size: 20px;
+            }
+
+            .panel {
+                padding: 16px;
+                border-radius: 14px;
+            }
+
+            .modal {
+                padding: 22px 18px;
+                border-radius: 18px;
+            }
+
+            .danger-zone {
+                padding: 16px;
+                border-radius: 14px;
+            }
+
+            .profile-actions {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .profile-actions .btn-sm {
+                flex: 1;
+                min-width: 0;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .page {
+                padding: 16px 10px 50px;
+            }
+
+            .av {
+                width: 64px;
+                height: 64px;
+                font-size: 22px;
+            }
+
+            .profile-name {
+                font-size: 18px;
+            }
+
+            .stat-num {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .navbar {
+                padding: 0 10px;
+                height: 52px;
+            }
+
+            .page {
+                padding: 14px 8px 40px;
+            }
+        }
     </style>
 </head>
 
@@ -839,269 +1033,434 @@
     </nav>
 
     <!-- PAGE -->
-    <main class="page">
+    <main class="page" id="profile-page">
 
-        <!-- PROFILE HEADER -->
-        <div class="profile-header">
-            <div class="av-wrap">
-                <div class="av" id="av-letter" onclick="openEdit()">U</div>
-                <div class="av-badge" onclick="openEdit()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-                    </svg>
-                </div>
-            </div>
-            <div class="profile-info">
-                <div class="profile-name" id="disp-name">Loading...</div>
-                <div class="profile-email" id="disp-email">—</div>
-                <div class="profile-tags">
-                    <span class="tag tag-pink" id="tag-premium" style="display: none;">PRO</span>
-                    <span class="tag tag-purple" id="tag-pioneer" style="display: none;">Early Access</span>
-                    <span class="tag tag-gray" id="disp-since">Member</span>
-                </div>
-            </div>
-            <div class="profile-actions">
-                <button class="btn-sm btn-outline" onclick="openEdit()">Edit profile</button>
-                <button class="btn-sm btn-pink" onclick="window.location.href='/catalog.html'">Browse →</button>
-            </div>
+        <!-- Loading state -->
+        <div id="loading-state" class="loading-overlay">
+            <div class="spinner"></div>
+            <div class="loading-text">Loading profile...</div>
         </div>
 
-        <!-- STATS -->
-        <div class="stats">
-            <div class="stat">
-                <div class="stat-num pink" id="st-chars">—</div>
-                <div class="stat-desc">Characters</div>
-            </div>
-            <div class="stat">
-                <div class="stat-num" id="st-msgs">—</div>
-                <div class="stat-desc">Messages</div>
-            </div>
-            <div class="stat">
-                <div class="stat-num" id="st-hours">—</div>
-                <div class="stat-desc">Hours in chat</div>
-            </div>
-            <div class="stat">
-                <div class="stat-num pink" id="st-level">—</div>
-                <div class="stat-desc">Level</div>
-            </div>
+        <!-- Error state -->
+        <div id="error-state" style="display:none;" class="loading-overlay">
+            <div style="font-size:48px;">⚠️</div>
+            <div class="loading-text" id="error-msg">Failed to load profile</div>
+            <button class="btn-sm btn-pink" onclick="loadProfile()" style="margin-top:12px;">Retry</button>
         </div>
 
-        <!-- CHARS + ACTIVITY -->
-        <div class="grid2">
+        <!-- Profile content (hidden until loaded) -->
+        <div id="profile-content" style="display:none;">
 
-            <!-- Saved characters -->
-            <div class="panel">
-                <div class="sec-title">
-                    <span class="title-left"><em>My</em> characters</span>
-                    <a class="sec-link" href="/catalog.html">Browse all →</a>
+            <!-- PROFILE HEADER -->
+            <div class="profile-header">
+                <div class="av-wrap">
+                    <div class="av" id="av-letter" onclick="openEdit()">U</div>
+                    <div class="av-badge" onclick="openEdit()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                        </svg>
+                    </div>
                 </div>
-                <div class="char-list" id="char-list">
-                    <!-- filled by JS -->
+                <div class="profile-info">
+                    <div class="profile-name" id="disp-name">—</div>
+                    <div class="profile-email" id="disp-email">—</div>
+                    <div class="profile-bio" id="disp-bio"></div>
+                    <div class="profile-tags">
+                        <span class="tag tag-pink" id="tag-premium" style="display: none;">PRO</span>
+                        <span class="tag tag-purple" id="tag-pioneer" style="display: none;">Early Access</span>
+                        <span class="tag tag-gray" id="disp-since">Member</span>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Activity -->
-            <div class="panel">
-                <div class="sec-title"><span class="title-left"><em>Recent</em> activity</span></div>
-                <div class="activity-list" id="activity-list">
-                    <!-- filled by JS -->
+                <div class="profile-actions">
+                    <button class="btn-sm btn-outline" onclick="openEdit()">Edit profile</button>
+                    <button class="btn-sm btn-pink" onclick="window.location.href='/catalog.html'">Browse →</button>
                 </div>
             </div>
 
-        </div>
-
-        <!-- SETTINGS -->
-        <div class="grid1">
-            <div class="panel">
-                <div class="sec-title"><span class="title-left"><em>Settings</em></span></div>
-                <div class="settings-list">
-
-                    <div class="setting-row" onclick="toggleSw(this, 's_voice')">
-                        <div class="setting-left">
-                            <div class="setting-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                                    <path d="M15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14" />
-                                </svg>
-                            </div>
-                            Voice responses
-                        </div>
-                        <div class="sw" id="sw_voice"></div>
-                    </div>
-
-                    <div class="setting-row" onclick="toggleSw(this, 's_notif')">
-                        <div class="setting-left">
-                            <div class="setting-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" />
-                                </svg>
-                            </div>
-                            Notifications
-                        </div>
-                        <div class="sw" id="sw_notif"></div>
-                    </div>
-
-                    <div class="setting-row" onclick="toggleSw(this, 's_vib')">
-                        <div class="setting-left">
-                            <div class="setting-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="5" y="2" width="14" height="20" rx="3" />
-                                    <line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5" />
-                                </svg>
-                            </div>
-                            Vibration
-                        </div>
-                        <div class="sw" id="sw_vib"></div>
-                    </div>
-
-                    <div class="setting-row" onclick="toggleSw(this, 's_eye')">
-                        <div class="setting-left">
-                            <div class="setting-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z" />
-                                    <circle cx="12" cy="12" r="3" />
-                                </svg>
-                            </div>
-                            Eye tracking
-                        </div>
-                        <div class="sw" id="sw_eye"></div>
-                    </div>
-
-                    <div class="setting-row" onclick="window.location.href='/login.html'">
-                        <div class="setting-left">
-                            <div class="setting-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="3" y="11" width="18" height="11" rx="2" />
-                                    <path d="M7 11V7a5 5 0 0110 0v4" />
-                                </svg>
-                            </div>
-                            Change password
-                        </div>
-                        <div class="setting-right pink">Change →</div>
-                    </div>
-
-                    <div class="setting-row">
-                        <div class="setting-left">
-                            <div class="setting-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <line x1="2" y1="12" x2="22" y2="12" />
-                                    <path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
-                                </svg>
-                            </div>
-                            Language
-                        </div>
-                        <div class="setting-right">
-                            English
-                            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M3 5l3 3 3-3" />
-                            </svg>
-                        </div>
-                    </div>
-
+            <!-- STATS -->
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-num pink" id="st-chars">—</div>
+                    <div class="stat-desc">Characters</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num" id="st-msgs">—</div>
+                    <div class="stat-desc">Messages</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num" id="st-hours">—</div>
+                    <div class="stat-desc">Hours in chat</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num pink" id="st-level">—</div>
+                    <div class="stat-desc">Level</div>
                 </div>
             </div>
-        </div>
 
-        <!-- DANGER ZONE -->
-        <div class="danger-zone">
-            <div class="danger-text">
-                <h4>Delete account</h4>
-                <p>Permanently delete your account and all data. This cannot be undone.</p>
+            <!-- PERSONAL INFO -->
+            <div class="grid1">
+                <div class="panel">
+                    <div class="sec-title"><span class="title-left"><em>Personal</em> info</span></div>
+                    <div class="info-row">
+                        <span class="info-label">Display name</span>
+                        <span class="info-value" id="info-display-name">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Username</span>
+                        <span class="info-value" id="info-username">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Email</span>
+                        <span class="info-value" id="info-email">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Bio</span>
+                        <span class="info-value" id="info-bio">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Language</span>
+                        <span class="info-value" id="info-language">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Timezone</span>
+                        <span class="info-value" id="info-timezone">—</span>
+                    </div>
+                </div>
             </div>
-            <button class="btn-danger" onclick="confirmDelete()">Delete account</button>
+
+            <!-- CHARS + ACTIVITY -->
+            <div class="grid2">
+
+                <!-- Saved characters -->
+                <div class="panel">
+                    <div class="sec-title">
+                        <span class="title-left"><em>My</em> characters</span>
+                        <a class="sec-link" href="/catalog.html">Browse all →</a>
+                    </div>
+                    <div class="char-list" id="char-list">
+                        <div style="padding: 10px; color: var(--muted); font-size: 12px;">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Activity -->
+                <div class="panel">
+                    <div class="sec-title"><span class="title-left"><em>Recent</em> activity</span></div>
+                    <div class="activity-list" id="activity-list">
+                        <div style="padding: 10px; color: var(--muted); font-size: 12px;">Loading...</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SETTINGS -->
+            <div class="grid1">
+                <div class="panel">
+                    <div class="sec-title"><span class="title-left"><em>Settings</em></span></div>
+                    <div class="settings-list">
+
+                        <div class="setting-row" onclick="togglePref(this, 'voice_enabled')">
+                            <div class="setting-left">
+                                <div class="setting-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                                        <path d="M15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14" />
+                                    </svg>
+                                </div>
+                                Voice responses
+                            </div>
+                            <div class="sw" id="sw-voice_enabled"></div>
+                        </div>
+
+                        <div class="setting-row" onclick="togglePref(this, 'avatar_enabled')">
+                            <div class="setting-left">
+                                <div class="setting-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                                        <circle cx="12" cy="7" r="4" />
+                                    </svg>
+                                </div>
+                                Avatar enabled
+                            </div>
+                            <div class="sw" id="sw-avatar_enabled"></div>
+                        </div>
+
+                        <div class="setting-row" onclick="togglePref(this, 'notifications')">
+                            <div class="setting-left">
+                                <div class="setting-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" />
+                                    </svg>
+                                </div>
+                                Notifications
+                            </div>
+                            <div class="sw" id="sw-notifications"></div>
+                        </div>
+
+                        <div class="setting-row" onclick="window.location.href='/login.html'">
+                            <div class="setting-left">
+                                <div class="setting-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" />
+                                        <path d="M7 11V7a5 5 0 0110 0v4" />
+                                    </svg>
+                                </div>
+                                Change password
+                            </div>
+                            <div class="setting-right pink">Change →</div>
+                        </div>
+
+                        <div class="setting-row" onclick="openEdit()">
+                            <div class="setting-left">
+                                <div class="setting-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10" />
+                                        <line x1="2" y1="12" x2="22" y2="12" />
+                                        <path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
+                                    </svg>
+                                </div>
+                                Language & Timezone
+                            </div>
+                            <div class="setting-right" id="setting-lang">English <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5l3 3 3-3" /></svg></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- DANGER ZONE -->
+            <div class="danger-zone">
+                <div class="danger-text">
+                    <h4>Delete account</h4>
+                    <p>Permanently delete your account and all data. This cannot be undone.</p>
+                </div>
+                <button class="btn-danger" onclick="confirmDelete()">Delete account</button>
+            </div>
+
+            <!-- LOGOUT -->
+            <button class="btn-logout" onclick="logout()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
+                </svg>
+                Sign out
+            </button>
+
         </div>
-
-        <!-- LOGOUT -->
-        <button class="btn-logout" onclick="logout()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round">
-                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
-            </svg>
-            Sign out
-        </button>
-
     </main>
 
     <!-- EDIT MODAL -->
     <div class="modal-bg" id="edit-modal">
         <div class="modal">
-            <button class="modal-x" onclick="closeEdit()">×</button>
+            <button class="modal-x" onclick="closeEdit()">✕</button>
             <div class="modal-title">Edit profile</div>
             <div class="field-group">
                 <div>
+                    <label class="field-label">Display name</label>
+                    <input class="field" id="edit-display-name" type="text" placeholder="How others see you">
+                </div>
+                <div>
                     <label class="field-label">Username</label>
-                    <input class="field" id="edit-name" type="text" placeholder="Your name">
+                    <input class="field" id="edit-name" type="text" placeholder="Your username">
+                    <div class="field-error" id="err-username"></div>
                 </div>
                 <div>
                     <label class="field-label">Email</label>
                     <input class="field" id="edit-email" type="email" placeholder="you@example.com">
+                    <div class="field-error" id="err-email"></div>
+                </div>
+                <div>
+                    <label class="field-label">Bio</label>
+                    <textarea class="field" id="edit-bio" placeholder="Tell us about yourself..." rows="3"></textarea>
+                </div>
+                <div>
+                    <label class="field-label">Language</label>
+                    <select class="field" id="edit-language">
+                        <option value="en">English</option>
+                        <option value="ru">Русский</option>
+                        <option value="es">Español</option>
+                        <option value="de">Deutsch</option>
+                        <option value="fr">Français</option>
+                        <option value="ja">日本語</option>
+                        <option value="ko">한국어</option>
+                        <option value="zh">中文</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="field-label">Timezone</label>
+                    <select class="field" id="edit-timezone">
+                        <option value="">Select timezone</option>
+                        <option value="UTC">UTC</option>
+                        <option value="America/New_York">Eastern (NY)</option>
+                        <option value="America/Chicago">Central (Chicago)</option>
+                        <option value="America/Denver">Mountain (Denver)</option>
+                        <option value="America/Los_Angeles">Pacific (LA)</option>
+                        <option value="Europe/London">London</option>
+                        <option value="Europe/Berlin">Berlin</option>
+                        <option value="Europe/Moscow">Moscow</option>
+                        <option value="Asia/Bishkek">Bishkek (UTC+6)</option>
+                        <option value="Asia/Tokyo">Tokyo</option>
+                        <option value="Asia/Shanghai">Shanghai</option>
+                        <option value="Australia/Sydney">Sydney</option>
+                    </select>
                 </div>
             </div>
-            <button class="modal-submit" onclick="saveEdit()">Save changes</button>
+            <button class="modal-submit" id="save-btn" onclick="saveEdit()">Save changes</button>
         </div>
     </div>
 
     <div class="toast" id="toast"></div>
 
     <script>
-        /* ── GUARD ── */
-        if (!localStorage.getItem('auth_token')) {
-            window.location.href = '/login.html?next=profile.html';
+        /* ========== AUTH GUARD ========== */
+        const TOKEN = localStorage.getItem('auth_token');
+        if (!TOKEN) {
+            window.location.href = '/login.html?next=' + encodeURIComponent(window.location.pathname);
         }
 
-        /* ── DATA ── */
-        const username = localStorage.getItem('username') || 'User';
-        const email = localStorage.getItem('email') || '—';
-        const userId = localStorage.getItem('user_id') || '';
+        /* ========== STATE ========== */
+        let profileData = null;
+        let isSaving = false;
 
+        /* ========== API HELPER ========== */
+        async function apiFetch(url, options = {}) {
+            const headers = {
+                'Content-Type': 'application/json',
+                ...(options.headers || {})
+            };
+            if (TOKEN) {
+                headers['Authorization'] = 'Bearer ' + TOKEN;
+            }
+            const resp = await fetch(url, { ...options, headers });
+            if (resp.status === 401) {
+                showToast('Session expired. Please log in again.', 'err');
+                setTimeout(() => {
+                    localStorage.removeItem('auth_token');
+                    window.location.href = '/login.html';
+                }, 1500);
+                throw new Error('Unauthorized');
+            }
+            return resp;
+        }
 
-        /* ── INIT ── */
-        document.getElementById('disp-name').textContent = username;
-        document.getElementById('disp-email').textContent = email;
-        document.getElementById('av-letter').textContent = username.charAt(0).toUpperCase();
-        document.getElementById('disp-since').textContent = 'Since 2024';
+        /* ========== LOAD PROFILE ========== */
+        async function loadProfile() {
+            document.getElementById('loading-state').style.display = 'flex';
+            document.getElementById('error-state').style.display = 'none';
+            document.getElementById('profile-content').style.display = 'none';
 
-        // Fetch dynamic stats from backend API
+            try {
+                const resp = await apiFetch('/api/profile/me');
+                if (!resp.ok) {
+                    throw new Error('Failed to load profile: ' + resp.status);
+                }
+                profileData = await resp.json();
+                renderProfile(profileData);
+                document.getElementById('loading-state').style.display = 'none';
+                document.getElementById('profile-content').style.display = 'block';
+            } catch (e) {
+                console.error('Profile load error:', e);
+                document.getElementById('loading-state').style.display = 'none';
+                document.getElementById('error-state').style.display = 'flex';
+                document.getElementById('error-msg').textContent = e.message || 'Failed to load profile';
+            }
+        }
+
+        /* ========== RENDER PROFILE ========== */
+        function renderProfile(p) {
+            // Header
+            const displayName = p.display_name || p.username || 'User';
+            document.getElementById('disp-name').textContent = displayName;
+            document.getElementById('disp-email').textContent = p.email || '—';
+            document.getElementById('disp-bio').textContent = p.bio || '';
+            document.getElementById('disp-bio').style.display = p.bio ? 'block' : 'none';
+            document.getElementById('av-letter').textContent = displayName.charAt(0).toUpperCase();
+
+            // Avatar image if available
+            const avEl = document.getElementById('av-letter');
+            if (p.avatar_url) {
+                avEl.innerHTML = '<img src="' + p.avatar_url + '" alt="avatar" onerror="this.parentElement.textContent=\'' + displayName.charAt(0).toUpperCase() + '\'">';
+            }
+
+            // Tags
+            if (p.is_premium) document.getElementById('tag-premium').style.display = 'inline-block';
+            if (p.is_pioneer) document.getElementById('tag-pioneer').style.display = 'inline-block';
+
+            // "Since" date
+            if (p.created_at) {
+                try {
+                    const d = new Date(p.created_at);
+                    document.getElementById('disp-since').textContent = 'Since ' + d.getFullYear();
+                } catch(e) {
+                    document.getElementById('disp-since').textContent = 'Member';
+                }
+            }
+
+            // Personal info section
+            document.getElementById('info-display-name').textContent = p.display_name || '—';
+            document.getElementById('info-username').textContent = p.username || '—';
+            document.getElementById('info-email').textContent = p.email || '—';
+            setInfoValue('info-bio', p.bio);
+            setInfoValue('info-language', formatLanguage(p.language));
+            setInfoValue('info-timezone', p.timezone);
+
+            // Settings
+            initPreferences(p.preferences || {});
+
+            // Language display in settings
+            document.getElementById('setting-lang').innerHTML = (formatLanguage(p.language) || 'English') + ' <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5l3 3 3-3" /></svg>';
+
+            // Update localStorage with latest data
+            if (p.username) localStorage.setItem('username', p.username);
+            if (p.email) localStorage.setItem('email', p.email);
+        }
+
+        function setInfoValue(id, value) {
+            const el = document.getElementById(id);
+            if (value) {
+                el.textContent = value;
+                el.classList.remove('empty');
+            } else {
+                el.textContent = 'Not set';
+                el.classList.add('empty');
+            }
+        }
+
+        function formatLanguage(code) {
+            const map = { en: 'English', ru: 'Русский', es: 'Español', de: 'Deutsch', fr: 'Français', ja: '日本語', ko: '한국어', zh: '中文' };
+            return map[code] || code || null;
+        }
+
+        /* ========== LOAD STATS & ACTIVITY ========== */
         async function loadStats() {
             try {
-                const token = localStorage.getItem('auth_token');
-                const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
-                const currentUserId = localStorage.getItem('user_id');
-                if (currentUserId) headers['X-User-Id'] = currentUserId;
-
-                // Load Stats
-                const r = await fetch('/api/users/stats', { headers });
-                if (r.ok) {
-                    const data = await r.json();
+                const resp = await apiFetch('/api/users/stats');
+                if (resp.ok) {
+                    const data = await resp.json();
                     document.getElementById('st-chars').textContent = data.stat_chars || '0';
                     document.getElementById('st-msgs').textContent = data.stat_msgs || '0';
                     document.getElementById('st-hours').textContent = (data.stat_hours || '0') + 'h';
                     document.getElementById('st-level').textContent = data.stat_level || '1';
 
-                    // Cache for fast reload
-                    localStorage.setItem('stat_chars', data.stat_chars);
-                    localStorage.setItem('stat_msgs', data.stat_msgs);
-                    localStorage.setItem('stat_hours', data.stat_hours);
-                    localStorage.setItem('stat_level', data.stat_level);
-
                     if (data.is_premium) document.getElementById('tag-premium').style.display = 'inline-block';
                     if (data.is_pioneer) document.getElementById('tag-pioneer').style.display = 'inline-block';
                 }
+            } catch (e) {
+                console.error('Stats load error:', e);
+                // Keep dashes as fallback
+            }
 
-                // Load Activity
-                const rAct = await fetch('/api/users/activity', { headers });
+            try {
+                const rAct = await apiFetch('/api/users/activity');
                 if (rAct.ok) {
                     const actData = await rAct.json();
-                    
+
                     const charList = document.getElementById('char-list');
                     if (actData.characters && actData.characters.length > 0) {
                         charList.innerHTML = actData.characters.map(c => `
@@ -1116,7 +1475,7 @@
                           </div>
                         `).join('');
                     } else {
-                        charList.innerHTML = `<div style="padding: 10px; color: var(--muted); font-size: 12px;">No characters yet. Start chatting!</div>`;
+                        charList.innerHTML = '<div style="padding: 10px; color: var(--muted); font-size: 12px;">No characters yet. Start chatting!</div>';
                     }
 
                     const actList = document.getElementById('activity-list');
@@ -1129,116 +1488,180 @@
                           </div>
                         `).join('');
                     } else {
-                        actList.innerHTML = `<div style="padding: 10px; color: var(--muted); font-size: 12px;">No recent activity.</div>`;
+                        actList.innerHTML = '<div style="padding: 10px; color: var(--muted); font-size: 12px;">No recent activity.</div>';
                     }
                 }
             } catch (e) {
-                console.error("Failed to load dynamic data", e);
-                // Fallback stats
-                document.getElementById('st-chars').textContent = localStorage.getItem('stat_chars') || '0';
-                document.getElementById('st-msgs').textContent = localStorage.getItem('stat_msgs') || '0';
-                document.getElementById('st-hours').textContent = localStorage.getItem('stat_hours') ? localStorage.getItem('stat_hours') + 'h' : '0h';
-                document.getElementById('st-level').textContent = localStorage.getItem('stat_level') || '1';
+                console.error('Activity load error:', e);
             }
         }
-        loadStats();
 
-        // Apply default settings or load from localStorage
-        function initSettings() {
-            const defaults = { s_voice: true, s_notif: false, s_vib: false, s_eye: true };
-            for (const [key, def] of Object.entries(defaults)) {
-                const swEl = document.getElementById('sw_' + key.split('_')[1]);
-                const stored = localStorage.getItem(key);
-                const isOn = stored === null ? def : stored === 'true';
-                if (isOn && swEl) swEl.classList.add('on');
+        /* ========== PREFERENCES ========== */
+        function initPreferences(prefs) {
+            const defaults = { voice_enabled: true, avatar_enabled: true, notifications: false };
+            const merged = { ...defaults, ...prefs };
+
+            setToggle('voice_enabled', merged.voice_enabled);
+            setToggle('avatar_enabled', merged.avatar_enabled);
+            setToggle('notifications', merged.notifications);
+        }
+
+        function setToggle(key, value) {
+            const sw = document.getElementById('sw-' + key);
+            if (!sw) return;
+            if (value) {
+                sw.classList.add('on');
+            } else {
+                sw.classList.remove('on');
             }
         }
-        initSettings();
 
-        /* ── TOGGLE ── */
-        function toggleSw(row, key) {
+        async function togglePref(row, key) {
             const sw = row.querySelector('.sw');
             const isNowOn = sw.classList.toggle('on');
-            if (key) localStorage.setItem(key, isNowOn);
-        }
 
-        /* ── EDIT MODAL ── */
-        function openEdit() {
-            document.getElementById('edit-name').value = localStorage.getItem('username') || '';
-            document.getElementById('edit-email').value = localStorage.getItem('email') || '';
-            document.getElementById('edit-modal').classList.add('show');
-        }
-        function closeEdit() { document.getElementById('edit-modal').classList.remove('show'); }
-
-        async function saveEdit() {
-            const name = document.getElementById('edit-name').value.trim();
-            const email = document.getElementById('edit-email').value.trim();
-            if (!name) { showToast('Enter a username', 'err'); return; }
-
+            // Save to backend
             try {
-                const res = await fetch('/api/auth/profile/', {
+                const prefs = { ...(profileData?.preferences || {}) };
+                prefs[key] = isNowOn;
+
+                const resp = await apiFetch('/api/profile/me', {
                     method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
-                    },
-                    body: JSON.stringify({ username: name, email })
+                    body: JSON.stringify({ preferences: prefs })
                 });
-                if (res.ok) {
-                    localStorage.setItem('username', name);
-                    if (email) localStorage.setItem('email', email);
-                    document.getElementById('disp-name').textContent = name;
-                    document.getElementById('disp-email').textContent = email || '—';
-                    document.getElementById('av-letter').textContent = name.charAt(0).toUpperCase();
-                    closeEdit();
-                    showToast('Profile updated', 'ok');
+
+                if (resp.ok) {
+                    profileData = await resp.json();
+                    showToast('Setting updated', 'ok');
                 } else {
-                    showToast('Failed to save', 'err');
+                    // Revert toggle
+                    sw.classList.toggle('on');
+                    showToast('Failed to save setting', 'err');
                 }
-            } catch {
-                // Offline fallback — save locally
-                localStorage.setItem('username', name);
-                if (email) localStorage.setItem('email', email);
-                document.getElementById('disp-name').textContent = name;
-                document.getElementById('disp-email').textContent = email || '—';
-                document.getElementById('av-letter').textContent = name.charAt(0).toUpperCase();
-                closeEdit();
-                showToast('Saved locally', 'ok');
+            } catch (e) {
+                // Revert toggle
+                sw.classList.toggle('on');
+                showToast('Failed to save setting', 'err');
             }
         }
 
-        /* ── LOGOUT ── */
+        /* ========== EDIT MODAL ========== */
+        function openEdit() {
+            if (!profileData) return;
+            document.getElementById('edit-display-name').value = profileData.display_name || '';
+            document.getElementById('edit-name').value = profileData.username || '';
+            document.getElementById('edit-email').value = profileData.email || '';
+            document.getElementById('edit-bio').value = profileData.bio || '';
+            document.getElementById('edit-language').value = profileData.language || 'en';
+            document.getElementById('edit-timezone').value = profileData.timezone || '';
+            // Clear errors
+            document.querySelectorAll('.field-error').forEach(el => { el.classList.remove('show'); el.textContent = ''; });
+            document.getElementById('edit-modal').classList.add('show');
+        }
+
+        function closeEdit() {
+            document.getElementById('edit-modal').classList.remove('show');
+        }
+
+        async function saveEdit() {
+            if (isSaving) return;
+
+            const displayName = document.getElementById('edit-display-name').value.trim();
+            const username = document.getElementById('edit-name').value.trim();
+            const email = document.getElementById('edit-email').value.trim();
+            const bio = document.getElementById('edit-bio').value.trim();
+            const language = document.getElementById('edit-language').value;
+            const timezone = document.getElementById('edit-timezone').value;
+
+            if (!username) {
+                document.getElementById('err-username').textContent = 'Username is required';
+                document.getElementById('err-username').classList.add('show');
+                return;
+            }
+
+            isSaving = true;
+            const btn = document.getElementById('save-btn');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            try {
+                const resp = await apiFetch('/api/profile/me', {
+                    method: 'PATCH',
+                    body: JSON.stringify({
+                        display_name: displayName || undefined,
+                        username: username || undefined,
+                        email: email || undefined,
+                        bio: bio || undefined,
+                        language: language || undefined,
+                        timezone: timezone || undefined
+                    })
+                });
+
+                if (resp.ok) {
+                    profileData = await resp.json();
+                    renderProfile(profileData);
+                    closeEdit();
+                    showToast('Profile updated ✓', 'ok');
+                } else {
+                    const errData = await resp.json().catch(() => ({}));
+                    const detail = errData.detail || 'Failed to save';
+                    // Check for specific field errors
+                    if (typeof detail === 'string' && detail.toLowerCase().includes('username')) {
+                        document.getElementById('err-username').textContent = detail;
+                        document.getElementById('err-username').classList.add('show');
+                    } else if (typeof detail === 'string' && detail.toLowerCase().includes('email')) {
+                        document.getElementById('err-email').textContent = detail;
+                        document.getElementById('err-email').classList.add('show');
+                    } else {
+                        showToast(detail, 'err');
+                    }
+                }
+            } catch (e) {
+                showToast('Network error. Please try again.', 'err');
+            } finally {
+                isSaving = false;
+                btn.disabled = false;
+                btn.textContent = 'Save changes';
+            }
+        }
+
+        /* ========== LOGOUT ========== */
         function logout() {
             ['auth_token', 'username', 'user_id', 'email'].forEach(k => localStorage.removeItem(k));
             window.location.href = '/login.html';
         }
 
-        /* ── DELETE ── */
+        /* ========== DELETE ========== */
         function confirmDelete() {
             if (!confirm('Are you sure? This will permanently delete your account and all data.')) return;
             fetch('/api/auth/delete/', {
                 method: 'DELETE',
-                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('auth_token') }
+                headers: { 'Authorization': 'Bearer ' + TOKEN }
             }).finally(() => {
                 logout();
             });
         }
 
-        /* ── TOAST ── */
+        /* ========== TOAST ========== */
         let toastT;
         function showToast(msg, type = '') {
             const el = document.getElementById('toast');
             el.textContent = msg;
-            el.className = `toast show ${type}`;
+            el.className = 'toast show ' + type;
             clearTimeout(toastT);
             toastT = setTimeout(() => el.classList.remove('show'), 2800);
         }
 
-        /* ── MODAL CLOSE ON BG ── */
+        /* ========== MODAL CLOSE ON BG ========== */
         document.getElementById('edit-modal').addEventListener('click', function (e) {
             if (e.target === this) closeEdit();
         });
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEdit(); });
+
+        /* ========== INIT ========== */
+        loadProfile().then(() => {
+            loadStats();
+        });
     </script>
 </body>
 

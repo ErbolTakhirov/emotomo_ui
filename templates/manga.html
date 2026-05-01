@@ -330,12 +330,12 @@
 
     .msg-row.bot {
       justify-content: flex-start;
-      padding-right: 28%;
+      padding-right: 20%;
     }
 
     .msg-row.user {
       justify-content: flex-end;
-      padding-left: 28%;
+      padding-left: 20%;
     }
 
     .bubble {
@@ -1641,8 +1641,133 @@
       width: 22px;
       height: 22px;
     }
-  </style>
 
+    /* ═══ MOBILE BREAKPOINTS ═══ */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 260px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .msg-row.bot {
+        padding-right: 12%;
+      }
+      .msg-row.user {
+        padding-left: 12%;
+      }
+      .bubble {
+        font-size: 13px;
+        padding: 8px 12px;
+      }
+      .top-bar {
+        height: 52px;
+        padding: 0 14px;
+      }
+      .char-name {
+        font-size: 14px;
+      }
+      .char-status {
+        font-size: 10px;
+      }
+      #input-bar {
+        padding: 8px 10px calc(10px + var(--safe-bottom));
+        gap: 8px;
+      }
+      .input-pill {
+        border-radius: 22px;
+        padding: 0 4px 0 12px;
+      }
+      #user-input {
+        font-size: 13px;
+        padding: 10px 0;
+      }
+      #send {
+        width: 40px;
+        height: 40px;
+      }
+      .pill-icon {
+        width: 32px;
+        height: 32px;
+      }
+      .sidebar {
+        width: 240px;
+      }
+      .sidebar-body {
+        padding: 16px;
+      }
+      .menu-btn {
+        width: 30px;
+        height: 30px;
+      }
+      .btn-end {
+        font-size: 11px;
+        padding: 6px 12px;
+      }
+      #msgs-inner {
+        padding: 0 10px 8px;
+      }
+      #msgs-outer {
+        top: 40vh;
+      }
+    }
+
+    @media (max-width: 375px) {
+      .msg-row.bot {
+        padding-right: 8%;
+      }
+      .msg-row.user {
+        padding-left: 8%;
+      }
+      .bubble {
+        font-size: 12.5px;
+        padding: 7px 10px;
+      }
+      .char-name {
+        font-size: 13px;
+      }
+      #input-bar {
+        padding: 6px 8px calc(8px + var(--safe-bottom));
+        gap: 6px;
+      }
+      #send {
+        width: 38px;
+        height: 38px;
+      }
+      .sidebar {
+        width: 220px;
+      }
+    }
+
+    @media (max-width: 320px) {
+      .msg-row.bot {
+        padding-right: 5%;
+      }
+      .msg-row.user {
+        padding-left: 5%;
+      }
+      .bubble {
+        font-size: 12px;
+      }
+      .top-bar {
+        height: 48px;
+        padding: 0 10px;
+      }
+      #send {
+        width: 36px;
+        height: 36px;
+      }
+      .pill-icon {
+        width: 28px;
+        height: 28px;
+      }
+      .pill-icon svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  </style>
+  <style>
     /* ─── CALMSCORE MODAL ─── */
     .calm-score-overlay {
       position: fixed;
@@ -2645,6 +2770,20 @@
             }
           }
 
+          // 3. Display any pending initiative/proactive messages from the character
+          if (data.pending_initiatives && data.pending_initiatives.length > 0) {
+            console.log(`[Frontend] Received ${data.pending_initiatives.length} pending initiative(s)`);
+            data.pending_initiatives.forEach((init, idx) => {
+              setTimeout(() => {
+                const initText = init.text || init.initiative || '';
+                if (initText) {
+                  const { text: initClean } = extractFormFromTail(initText);
+                  if (initClean) addMsg(initClean, 'bot', init.timestamp || null, init.audio_url || null);
+                  if (window.mouth) window.mouth.speak(initClean);
+                }
+              }, (idx + 1) * 2000); // Stagger initiative messages by 2s
+            });
+          }
 
         } catch (e) {
           console.error(e);
@@ -2693,6 +2832,66 @@
 
       input.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
       if (sendBtn.addEventListener) sendBtn.addEventListener('click', send);
+
+      // ── IdleManager: polls for proactive/initiative messages when user is idle ──
+      class IdleManager {
+        constructor() {
+          this.IDLE_MS = 30000;       // Start polling after 30s of inactivity
+          this.POLL_MS = 15000;       // Poll every 15s
+          this.lastActivity = Date.now();
+          this.pollTimer = null;
+          this.idleTimer = null;
+          this.active = false;
+        }
+        reset() {
+          this.lastActivity = Date.now();
+          this._stopPolling();
+          this._scheduleIdle();
+        }
+        _scheduleIdle() {
+          if (this.idleTimer) clearTimeout(this.idleTimer);
+          this.idleTimer = setTimeout(() => {
+            this._startPolling();
+          }, this.IDLE_MS);
+        }
+        _startPolling() {
+          if (this.pollTimer) return; // already polling
+          console.log('[IdleManager] User idle, starting initiative polling');
+          this.active = true;
+          this._poll();
+        }
+        _stopPolling() {
+          if (this.pollTimer) { clearInterval(this.pollTimer); this.pollTimer = null; }
+          this.active = false;
+        }
+        async _poll() {
+          const sid = window.currentSessionId;
+          if (!sid) { this.pollTimer = setInterval(() => this._poll(), this.POLL_MS); return; }
+          try {
+            const r = await fetch(`/api/initiatives/${sid}`);
+            if (!r.ok) return;
+            const data = await r.json();
+            if (data.messages && data.messages.length > 0) {
+              console.log(`[IdleManager] Got ${data.messages.length} initiative(s)`);
+              data.messages.forEach((msg, idx) => {
+                setTimeout(() => {
+                  const txt = msg.text || msg.initiative || '';
+                  if (txt) {
+                    const { text: clean } = extractFormFromTail(txt);
+                    if (clean) addMsg(clean, 'bot', msg.timestamp || null, msg.audio_url || null);
+                    if (window.mouth) window.mouth.speak(clean);
+                  }
+                }, idx * 2000);
+              });
+            }
+          } catch (e) {
+            console.warn('[IdleManager] Poll error:', e);
+          }
+          this.pollTimer = setInterval(() => this._poll(), this.POLL_MS);
+        }
+      }
+      window.IdleManager = new IdleManager();
+      window.IdleManager.reset();
 
     })();
   </script>
